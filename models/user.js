@@ -2,7 +2,6 @@
 
 //import the database
 import mongoose from 'mongoose';
-import Passport from 'passport-local-mongoose';
 
 //Define the user schema
 const userSchema = new mongoose.Schema({
@@ -23,8 +22,6 @@ const userSchema = new mongoose.Schema({
     required: true,
   }
 });
-
-// userSchema.plugin(Passport);
 
 //Export the user model 
 export default mongoose.model('User', userSchema);

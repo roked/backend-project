@@ -23,4 +23,16 @@ import { indexRouter } from './routes/index.js';
 let port          = process.env.PORT   || 3000;
 let connectUri    = process.env.URL    || 'mongodb://localhost:27017/back_end';
 
+//Connect to Mongoose
+mongoose.connect(connectUri, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false
+}).then(() => {
+   console.log("Connected to DB!");  
+}).catch(err => {
+   console.log("Error: ", err.message); 
+});
+
 app.listen(port, () => console.log('Web Server UP!'));
