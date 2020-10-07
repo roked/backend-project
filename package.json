@@ -1,0 +1,29 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "backend code of the assignment project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mitko Donchev",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "assert": "^2.0.0",
+    "handlebars": "^4.7.6",
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-passport": "^4.1.3",
+    "koa-router": "^9.4.0",
+    "koa-session": "^6.0.0",
+    "koa-views": "^6.3.1",
+    "mongodb": "^3.6.2",
+    "mongoose": "^5.10.7",
+    "nodemon": "^2.0.4",
+    "passport-http": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^6.0.1",
+    "promise-mysql": "^4.1.3"
+  }
+}
