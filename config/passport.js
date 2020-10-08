@@ -1,10 +1,11 @@
 import passport      from 'passport';
 import localPassport from 'passport-local';
 import mongoose      from 'mongoose';
+import auth          from '../auth.js'
 
 const LocalStrategy = localPassport.Strategy;
 
-let User = mongoose.model('User');
+
 
 passport.use(new LocalStrategy({
   usernameField: 'user[email]',
@@ -18,5 +19,3 @@ passport.use(new LocalStrategy({
     return done(null, user);
   }).catch(done);
 }));
-
-export { passport }

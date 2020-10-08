@@ -1,35 +1,22 @@
-//Seting up the authentication by checking the tokens
-import jwt             from 'jsonwebtoken';
-import config          from '../config/config.js';
+//Serializing and de-serializing the user information to the session
+import passport      from 'koa-passport';
+import pkg           from 'passport-local';
+import mongoose      from 'mongoose';
 
-//get the secret string used for JWT
-const secret = config.secret;
 
-//Function to help return the token from request header
-export function getTokenFromHeader(ctx){
-  if (ctx.request.headers.authorization && ctx.request.headers.authorization.split(' ')[0] === 'Token') {
-    return ctx.request.authorization.split(' ')[1];
-  }
+const { Strategy: LocalStrategy } = pkg;
 
-  return null;
-}
+let User = mongoose.model('User');
 
-export let auth = {
-  //jwt for endpoint with required auth
-  required: jwt({
-    secret: secret,
-    //Define where the payload will be attached
-    userProperty: 'payload',
-    getToken: getTokenFromHeader
-  }),
-  //For optional auth
-  optional: jwt({
-    secret: secret,
-    userProperty: 'payload',
-    credentialsRequired: false,
-    getToken: getTokenFromHeader
-  })
-};
-
-//Export the auth so it is public(accessible)
-export{ getTokenFromHeader, auth};
+passport.use(new LocalStrategy({
+  usernameField: 'user[email]',
+  passwordField: 'user[password]'
+}, async (email, password, done) => {
+  await User.findOne({email: email}).then((user) => {
+    if(!user || !user.validPassword(password)){
+      return done(null, false, {errors: {'email or password': 'is invalid'}});
+    }
+    console.log("Successfuly Loged In")
+    return done(null, user);
+  }).catch(done);
+}));

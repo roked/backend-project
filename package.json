@@ -11,6 +11,7 @@
   "type": "module",
   "dependencies": {
     "@koa/router": "^9.4.0",
+    "bcrypt": "^5.0.0",
     "crypto": "^1.0.1",
     "handlebars": "^4.7.6",
     "jsonwebtoken": "^8.5.1",

@@ -4,15 +4,25 @@ import router          from './routes/index.js';
 import views           from 'koa-views';
 import mongoose        from 'mongoose';
 import bodyParser      from 'koa-bodyparser';
-import convert         from 'koa-convert';
+import session         from 'koa-session';
+import passport        from 'koa-passport';
 
 const app = new Koa();
+
+//Koa sessions
+app.keys = ['the-super-secret-key'];
+app.use(session(app));
 
 //Add body parser in order to read from the website body
 app.use(bodyParser());
 
 //Install the "handlebars" package
 app.use(views(`views`, { extension: 'handlebars' }, {map: { handlebars: 'handlebars' }}));
+
+// authentication
+import './routes/auth.js';
+app.use(passport.initialize());
+app.use(passport.session());
 
 //use the routes from index.js
 app.use(router());
