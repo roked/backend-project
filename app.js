@@ -1,23 +1,33 @@
 //Import npm libraries etc.
 import Koa             from 'koa'; 
-import Router          from 'koa-router'; 
 import views           from 'koa-views';
 import mongoose        from 'mongoose';
 import bodyParser      from 'koa-bodyparser';
+import session         from 'koa-session';
+import middleware      from './middleware/index.js';
+import auth            from './routes/auth.js';
+import router          from './routes/index.js';
 
 const app = new Koa();
 
-//Add BodyParser to app
-app.use(bodyParser());
+//Koa sessions
+app.keys = ['the-super-secret-key'];
+app.use(session(app));
+
+//Add middlewares
+app.use(middleware());
+
+//Add Authentication
+app.use(auth());
 
 //Install the "handlebars" package
 app.use(views(`views`, { extension: 'handlebars' }, {map: { handlebars: 'handlebars' }}));
 
-//Adding routes
-app.use(indexRouter.routes());
+// authentication
+app.use(auth());
 
-//Import routes
-import { indexRouter } from './routes/index.js';
+//use the routes from index.js
+app.use(router());
 
 //Storing port, url, and dbanme as environment variables
 let port          = process.env.PORT   || 3000;
@@ -36,3 +46,5 @@ mongoose.connect(connectUri, {
 });
 
 app.listen(port, () => console.log('Web Server UP!'));
+
+export default app;
