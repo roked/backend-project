@@ -7,17 +7,17 @@ const { Strategy: CustomStrategy } = pkg;
 export default new CustomStrategy(async(ctx, done) => {
     console.log('Email Strategy: ', ctx.body);
     try {
-        // Test whether logins using email and password
+        //Test whether logins using email and password
         if(ctx.body.email && ctx.body.password) {
             const user = await User.findOne({
                 email: ctx.body.email.toLowerCase()
             });
-            // TODO - check password
+            //If neither the user(email) or password is invalid, the user won't be allowed to login
             if(!user || !user.validPassword(ctx.body.password)) {
                 done(null, false);
                 console.log('Wrong password.');
-            }
-            
+            }  
+            //Login successful
             done(null, user);
         } else {
             done(null, false);

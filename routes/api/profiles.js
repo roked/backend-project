@@ -29,7 +29,7 @@ async function register(ctx, next) {
     //Store all values from the body into variables
     const { username, email, password } = ctx.request.body;
     
-    // TODO - improve validation
+    //User validation
     if(username && email && password) {
         let user = await User.findOne({
             email
@@ -39,8 +39,10 @@ async function register(ctx, next) {
         if(!user) {
             user = new User();
             
+            //Add the information of the new user
             user.username = username;
-            user.email = email;               
+            user.email = email;     
+            //password is hashed and securely stored
             user.hashPassword(password);        
             
             await user.save();
