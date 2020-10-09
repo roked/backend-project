@@ -36,25 +36,24 @@ router.post('/login', async (ctx) => {
 
 });
 
-//register root
-router.post('/', async (ctx) => {
+//Register root
+router.post('/register', async (ctx) => {
     //getting username from the body (form)
     try{
-        const newUser = {
-            email: ctx.request.body.email,
-            username: ctx.request.body.username,
-            password: ctx.request.body.password
-        }        
-        await User.create(newUser, (err, user) => {
-        if(err){
-            console.log('Error: ' + err.message);
-            ctx.redirect('/');
-        } else {
-            console.log('New user created: ' + user);
-            ctx.redirect('/');
-        }
-      });
-    } catch (err){
+        let newUser = new User();    
+        
+        newUser.username = ctx.request.body.username;
+        newUser.email = ctx.request.body.email;
+        newUser.setPassword(ctx.request.body.password);
+        
+        console.log(newUser);
+        
+        await newUser.save().then((user) => {
+               console.log('New user: ' + user);
+            }).catch(err => {
+               console.log("Error: ", err.message); 
+            })     
+    } catch (err) {
       console.log(err.message);
       ctx.redirect('/');
     }
