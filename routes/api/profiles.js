@@ -1,63 +1,70 @@
-//Profile routes
-import Router       from '@koa/router';
-import User         from '../../models/user.js';
-import passport     from 'passport';
+//Import JWT (jsonwebtoken) generator and email authentication 
+import { authEmail, generateToken } from '../auth.js';
+import User from '../../models/user.js';
+import Router from '@koa/router';
 
-//Init new router
+//Setting up default path to be /api
 const router = new Router({
-  prefix: '/api'
+    prefix: '/api'
 });
 
-router.get('/', async (ctx) => {
-   try {
-       await ctx.render('index');
-   } catch (err){
-       console.log(err.message);
-   }
-});
-
-//Login route
-router.post('/login', async (ctx) => {    
-    //Perform authentication by using the LocalStrategy stored in passport.js
-    //Passport auth with authenticate()   
-    passport.authenticate('local', (err, user, info) => {
-        // pass errors to error handler middleware
-        if(err) { return console.log("Oh-no an error: " + err) }
-
-        // if auth successful, assign their token value to a generated jwt
-        // then return user object
-        if(user) {
-            user.token = user.generateJWT()
-            return ctx.json({ user: user.toAuthJSON() })
-        } else {
-            return ctx.throw(422, 'Error')
-        }
-    })
-
-});
-
-//Register root
-router.post('/register', async (ctx) => {
-    //getting username from the body (form)
-    try{
-        let newUser = new User();    
-        
-        newUser.username = ctx.request.body.username;
-        newUser.email = ctx.request.body.email;
-        newUser.setPassword(ctx.request.body.password);
-        
-        console.log(newUser);
-        
-        await newUser.save().then((user) => {
-               console.log('New user: ' + user);
-            }).catch(err => {
-               console.log("Error: ", err.message); 
-            })     
-    } catch (err) {
-      console.log(err.message);
-      ctx.redirect('/');
+//TEST PAGE
+//TODO - Remove after finish testing
+router.get('/', async(ctx) => {
+    try {
+        await ctx.render('index');
+    } catch(err) {
+        console.log(err.message);
     }
 });
 
-//Export the route so it is public(accessible)
+//Login endpoint
+router.post('/login', authEmail(), generateToken());
+
+//Register endpoint
+router.post('/register', register, generateToken());
+
+//async middleware for handling registration
+async function register(ctx, next) {
+    //Store all values from the body into variables
+    const { username, email, password } = ctx.request.body;
+    
+    // TODO - improve validation
+    if(username && email && password) {
+        let user = await User.findOne({
+            email
+        });
+        
+        //if the user is not registred
+        if(!user) {
+            user = new User({
+                username,
+                email,
+                //add pass hash
+                password
+            });
+            
+            // TODO add password hash here....
+            await user.save();
+            ctx.passport = {
+                user: user._id,
+            };
+            await next();
+        } else {
+            ctx.status = 400;
+            ctx.body = {
+                status: 'error',
+                message: 'E-mail already registered'
+            };
+        }
+    } else {
+        ctx.status = 400;
+        ctx.body = {
+            status: 'error',
+            message: 'Invalid email or password'
+        };
+    }
+}
+
+//Export the router
 export default router;
