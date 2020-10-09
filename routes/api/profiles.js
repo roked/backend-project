@@ -34,17 +34,15 @@ async function register(ctx, next) {
         let user = await User.findOne({
             email
         });
-        
+                
         //if the user is not registred
         if(!user) {
-            user = new User({
-                username,
-                email,
-                //add pass hash
-                password
-            });
+            user = new User();
             
-            // TODO add password hash here....
+            user.username = username;
+            user.email = email;               
+            user.hashPassword(password);        
+            
             await user.save();
             ctx.passport = {
                 user: user._id,
