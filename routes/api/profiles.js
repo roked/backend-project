@@ -29,22 +29,22 @@ async function register(ctx, next) {
     //Store all values from the body into variables
     const { username, email, password } = ctx.request.body;
     
-    // TODO - improve validation
+    //User validation
     if(username && email && password) {
         let user = await User.findOne({
             email
         });
-        
+                
         //if the user is not registred
         if(!user) {
-            user = new User({
-                username,
-                email,
-                //add pass hash
-                password
-            });
+            user = new User();
             
-            // TODO add password hash here....
+            //Add the information of the new user
+            user.username = username;
+            user.email = email;     
+            //password is hashed and securely stored
+            user.hashPassword(password);        
+            
             await user.save();
             ctx.passport = {
                 user: user._id,
