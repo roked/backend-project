@@ -24,6 +24,7 @@ router.post('/login', authEmail(), generateToken());
 //Register endpoint
 router.post('/register', register, generateToken());
 
+//TODO - move in middleware folder
 //async middleware for handling registration
 async function register(ctx, next) {
     //Store all values from the body into variables
@@ -31,12 +32,12 @@ async function register(ctx, next) {
     
     //User validation
     if(username && email && password) {
-        let user = await User.findOne({
-            email
-        });
-                
+        let user = await User.findOne({ email });
+        let user1 = await User.findOne({ username });
+              
+        //TODO - Improve username/email check for duplicates function
         //if the user is not registred
-        if(!user) {
+        if(!user || !user1) {
             user = new User();
             
             //Add the information of the new user
@@ -54,14 +55,14 @@ async function register(ctx, next) {
             ctx.status = 400;
             ctx.body = {
                 status: 'error',
-                message: 'E-mail already registered'
+                message: 'E-mail/username already registered!'
             };
         }
     } else {
         ctx.status = 400;
         ctx.body = {
             status: 'error',
-            message: 'Invalid email or password'
+            message: 'Email, username or password field is empty!'
         };
     }
 }
