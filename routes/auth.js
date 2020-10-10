@@ -31,7 +31,7 @@ passport.deserializeUser((id, done) => {
 
 //The default authentication function
 export default function auth() {
-    //compose all middlewares
+    //Compose all middlewares
     return compose([
         passport.initialize(),
     ]);

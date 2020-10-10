@@ -27,7 +27,8 @@ app.use(views(`views`, { extension: 'handlebars' }, {map: { handlebars: 'handleb
 app.use(auth());
 
 //use the routes from index.js
-app.use(router());
+app.use(router.routes())
+app.use(router.allowedMethods())
 
 //Storing port, url, and dbanme as environment variables
 let port          = process.env.PORT   || 3000;
