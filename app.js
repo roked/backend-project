@@ -7,23 +7,26 @@ import session         from 'koa-session';
 import middleware      from './middleware/index.js';
 import auth            from './routes/auth.js';
 import router          from './routes/index.js';
+import passport        from 'koa-passport';
 
 const app = new Koa();
 
-//Koa sessions
-app.keys = ['the-super-secret-key'];
+//Config session
+app.keys = ['my-secret-key'];
 app.use(session(app));
+
+// Init passport authentication 
+app.use(passport.initialize());
+// persistent login sessions 
+app.use(passport.session());
+
+//Install the "handlebars" package
+app.use(views(`views`, { extension: 'handlebars' }, {map: { handlebars: 'handlebars' }}));
 
 //Add middlewares
 app.use(middleware());
 
 //Add Authentication
-app.use(auth());
-
-//Install the "handlebars" package
-app.use(views(`views`, { extension: 'handlebars' }, {map: { handlebars: 'handlebars' }}));
-
-// authentication
 app.use(auth());
 
 //use the routes from index.js

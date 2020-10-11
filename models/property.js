@@ -34,13 +34,13 @@ const PropertySchema = new mongoose.Schema({
         type:String,
         required: true
     },
-//     author: {
-//         id: {
-//             type: mongoose.Schema.Types.ObjectId,
-//             red: 'User'
-//         },
-//         username: String
-//     }
+    author: {
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            red: 'User'
+        },
+        username: String
+    }
 });
 
 //Export the house model 

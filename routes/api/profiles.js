@@ -1,7 +1,8 @@
 //Import JWT (jsonwebtoken) generator and email authentication 
-import { authEmail, generateToken } from '../auth.js';
-import User from '../../models/user.js';
-import Router from '@koa/router';
+import { authEmail } from '../auth.js';
+import User          from '../../models/user.js';
+import Router        from '@koa/router';
+import passport      from 'koa-passport';
 
 //Setting up default path to be /api
 const router = new Router({
@@ -19,10 +20,16 @@ router.get('/', async(ctx) => {
 });
 
 //Login endpoint
-router.post('/login', authEmail(), generateToken());
+router.post('/login', authEmail(), async(ctx) => {
+    try {
+        await ctx.redirect('/api/property');
+    } catch(err) {
+        console.log(err.message);
+    }
+});
 
 //Register endpoint
-router.post('/register', register, generateToken());
+router.post('/register', register);
 
 //TODO - move in middleware folder
 //async middleware for handling registration
@@ -47,9 +54,15 @@ async function register(ctx, next) {
             user.hashPassword(password);        
             
             await user.save();
-            ctx.passport = {
-                user: user._id,
-            };
+            return passport.authenticate('email', (err, user, info, status) => {
+                if (user) {
+                  ctx.login(user);
+                  ctx.redirect('/api/property');
+                } else {
+                  ctx.status = 400;
+                  ctx.body = { status: 'error' };
+                }
+              })(ctx);
             await next();
         } else {
             ctx.status = 400;
