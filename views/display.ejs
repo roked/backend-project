@@ -1,0 +1,61 @@
+<!doctype html>
+
+<html>
+    <head>
+        <title>Real Estate Listings</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    </head>
+    <body>
+    <div class="container">
+        <div class="row text-center" style="display: flex; flex-wrap: wrap;">
+            <% properties.forEach((property) => { %>
+                <div class="col-lg-3 col-md-5 col-sm-6">
+                    <div class="card">
+                        <img class="card-img-top" src="<%= property.image %>" alt="<%= property.name %>">
+				        <div class="card-body">
+                            <h4>
+						         <%= property.name %>
+					        </h4>
+                        </div>                            
+                    </div> 
+                </div>
+            <% }); %>
+        </div>  
+    </div>
+    </body>
+</html>
+
+
+<!--         <div class="container">
+	<div class="row">
+		<div class="col-md-3">
+			<p class="lead">
+				 Real Estate Listings
+			</p>
+			<div class="list-group">
+				<li class="list-group-item active">Info 1</li>
+				<li class="list-group-item">Info 2</li>
+				<li class="list-group-item">Info 3</li>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div class="card mb-3">
+				<img class="card-img-top" src="{{property.image}}" alt="{{property.name}}">
+				<div class="card-body">
+					<h4 class="float-right">
+                        £  property.price 
+					</h4>
+					<h5 class="card-title">
+						<a href="#">{{property.name}}</a> 
+					</h5>
+					<p>
+						{{property.description}}
+					</p> 
+					<p>
+						<em>Created by:</em> {{property.author.username}}
+					</p>				
+				</div>
+			</div>
+		</div>
+	</div>
+</div> -->

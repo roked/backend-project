@@ -4,10 +4,10 @@ import views           from 'koa-views';
 import mongoose        from 'mongoose';
 import bodyParser      from 'koa-bodyparser';
 import session         from 'koa-session';
+import passport        from 'koa-passport';
 import middleware      from './middleware/index.js';
 import auth            from './routes/auth.js';
 import router          from './routes/index.js';
-import passport        from 'koa-passport';
 
 const app = new Koa();
 
@@ -20,8 +20,8 @@ app.use(passport.initialize());
 // persistent login sessions 
 app.use(passport.session());
 
-//Install the "handlebars" package
-app.use(views(`views`, { extension: 'handlebars' }, {map: { handlebars: 'handlebars' }}));
+//Install the "ejs" package (not using handlebar because it is LOGICLESS - no JS script)
+app.use(views(`views`, { extension: 'ejs' }, {map: { ejs: 'ejs' }}));
 
 //Add middlewares
 app.use(middleware());
@@ -33,6 +33,7 @@ app.use(auth());
 app.use(router.routes())
 app.use(router.allowedMethods())
 
+//TODO - store them in a seperate file
 //Storing port, url, and dbanme as environment variables
 let port          = process.env.PORT   || 3000;
 let connectUri    = process.env.URL    || 'mongodb://localhost:27017/back_end';
@@ -49,6 +50,7 @@ mongoose.connect(connectUri, {
    console.log("Error: ", err.message); 
 });
 
+//Start server on port 3000
 app.listen(port, () => console.log('Web Server UP!'));
 
 export default app;
