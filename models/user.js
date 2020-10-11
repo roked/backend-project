@@ -2,20 +2,20 @@
 //USER MODEL//
 //============
 
-//import the database/validator/hash/token and config
+//import the database and hash lib
 import mongoose from 'mongoose';
 import crypto   from 'crypto';
 
 //Define the user schema
 const UserSchema = new mongoose.Schema({ 
     username: {
-      type: String,
+        type: String,
         required: true,
     },
     email: { 
-      type: String,
-      required: false,
-      index: true,
+        type: String,
+        required: true,
+        index: true,
     },
     //Hash is the user password - it can be only decrypt with the right algorithm and Salt
     hash: String,

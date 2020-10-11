@@ -19,11 +19,15 @@ npx nodemon app.js
 
 #Mandatory dependencies:
 
+You must run:
+```javascript
+npm i -s @koa/router crypto ejs koa koa-bodyparser koa-compose koa-convert koa-cors koa-logger koa-passport koa-session koa-views mongodb mongoose passport passport-custom passport-local
+```
+
 ```javascript
     "@koa/router": "^9.4.0",
     "crypto": "^1.0.1",
-    "handlebars": "^4.7.6",
-    "jsonwebtoken": "^8.5.1",
+    "ejs": "^4.7.6",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-compose": "^4.1.0",
@@ -38,7 +42,6 @@ npx nodemon app.js
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",
     "passport-custom": "^1.1.1",
-    "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
 ```
 
