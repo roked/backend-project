@@ -2,7 +2,7 @@ import Router               from '@koa/router';
 import passport             from 'koa-passport';
 import User                 from '../../models/user.js';
 import Property             from '../../models/property.js';
-import { create, display }  from '../../middleware/middlewares.js'
+import { create, display, displayOne } from '../../middleware/middlewares.js';
 
 //Setting up default path to be /api
 const router = new Router({
@@ -32,6 +32,8 @@ router.post('/new', create);
 //Show all properties
 router.get('/show', display);
 
+//Check info about a specific property ifo
+router.get('/show/:id', displayOne);
 
 //Export the router
 export default router;

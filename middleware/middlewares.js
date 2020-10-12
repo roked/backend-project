@@ -132,3 +132,22 @@ export async function display(ctx, next) {
     //continue after middleware is done
     await next();
 }
+
+//async middleware for displaying as pecific property info
+export async function displayOne(ctx, next) {
+    //get all properties from the DB
+    const id = ctx.params.id;
+    let property = await Property.findById(id, (err, property) => {
+        if(err || !property){
+            console.log("This property has no info.");
+            console.log(err);
+        } else {
+            console.log(property);           
+        }
+    });
+    //Render the test page and push the properties
+    await ctx.render('displayOne', {property: property});
+    
+    //continue after middleware is done
+    await next();
+}
