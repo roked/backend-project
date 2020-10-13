@@ -23,7 +23,7 @@ router.get('/', async(ctx) => {
 //Login endpoint
 router.post('/login', authEmail(), async(ctx) => {
     try {
-        await ctx.redirect('/api/property');
+        await ctx.redirect('/api/property/show');
     } catch(err) {
         console.log(err.message);
     }
