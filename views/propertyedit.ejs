@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html>
+    <head>
+        <title>Real Estate Listings</title>
+    </head>
+    <body>
+        <h1>You made it here!</h1>
+        
+        <form action="/api/property/show/<%= property._id %>?_method=PUT" method="POST">
+            <label>Edit <%= property.name %></label>
+            <input type="text" name="property[name]" placeholder="Name" value="<%= property.name %>" required>            
+            <input type="number" name="property[price]" placeholder="Price" min="1" step="1" value="<%= property.price %>" required>
+            <input type="text" name="property[image]" placeholder="image url" value="<%= property.image %>">    
+            <input type="text" name="property[description]" placeholder="Description" <%= property.description %> required>
+            <select name="property[category]" id="category" value="<%= property.category %>" required>
+              <option value="commercial">commercial</option>
+              <option value="terrace">terrace</option>
+              <option value="apartment">apartment</option>
+            </select>
+            <select name="property[status]" id="status" value="<%= property.status %>" required>
+              <option value="underoffer">under offer</option>
+              <option value="highpriority">high priority</option>
+              <option value="unpublish">unpublish</option>
+            </select>
+            <input type="text" name="property[location]" placeholder="Location" value="<%= property.location %>">
+            <input class="featuresCheckbox" type="checkbox" name="property[features1]" value="garden">
+            <label for="vehicle1"> has garden</label><br>
+            <input type="checkbox" name="property[features2]" value="refurbishment">
+            <label for="vehicle2"> needs refurbishment</label><br>
+            <input type="checkbox" name="property[features3]" value="garage">
+            <label for="vehicle3"> has garage</label><br><br>
+            <button>
+                Update!
+            </button>
+        </form>               
+    </body>
+</html>

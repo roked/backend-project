@@ -101,7 +101,8 @@ export async function create(ctx, next) {
                 
         //add new property
         await property.save().then(() => {
-                    console.log(property)
+                    console.log(property);
+                    ctx.redirect('/api/property/show'); 
                 }).catch(next);
         
         //continue after middleware is done
@@ -135,8 +136,9 @@ export async function display(ctx, next) {
 
 //async middleware for displaying as pecific property info
 export async function displayOne(ctx, next) {
-    //get all properties from the DB
+    //get the property id from the request
     const id = ctx.params.id;
+    //check if it exist and find the property corresponding to the id
     let property = await Property.findById(id, (err, property) => {
         if(err || !property){
             console.log("This property has no info.");
@@ -147,6 +149,87 @@ export async function displayOne(ctx, next) {
     });
     //Render the test page and push the properties
     await ctx.render('displayOne', {property: property});
+    
+    //continue after middleware is done
+    await next();
+}
+
+//TODO - add auth check
+//async middleware for edit a property
+export async function edit(ctx, next) {
+    //get the property id from the request
+    const id = ctx.params.id;
+    //check if it exist and find the property corresponding to the id
+    let property = await Property.findById(id, (err, property) => {
+        if(err || !property){
+            console.log("This property has no info.");
+            console.log(err);
+        } else {
+            console.log(property);           
+        }
+    });
+    //Render the test page and push the properties
+    await ctx.render('propertyedit', {property: property});
+    
+    //continue after middleware is done
+    await next();
+}
+
+//async middleware to cehck if the user is the owner of the property
+export async function isOwner(ctx, next) {
+    //get the property id from the request and also the user loged in this session
+    const id = ctx.params.id;
+    let property = await Property.findById(id, (err, property) => {
+        if(err || !property){
+            console.log("This property has no info.");
+            ctx.redirect('back');
+        } else {
+            console.log(property.author.id.equals(ctx.state.user._id))
+            if(property.author.id.equals(ctx.state.user._id)){
+                //continue after middleware is done
+                console.log("User is the owner");
+            } else {
+                ctx.redirect('/api/');
+            }
+        }
+    });
+    
+    //continue after middleware is done
+    await next();
+}
+
+//async middleware for displaying as pecific property info
+export async function update(ctx, next) {
+    //get all properties from the DB
+    console.log(ctx.request.body.property)
+    const id = ctx.params.id;
+    let property = await Property.findByIdAndUpdate(id, ctx.request.body.property, (err, property) => {
+        if(err || !property){
+            console.log("This property has no info.");
+            console.log(err);
+        } else {
+            console.log(property);           
+        }
+    });
+    //Render the test page and push the properties
+    await ctx.redirect("/api/property/show/" + property._id);   
+    //continue after middleware is done
+    await next();
+}
+
+//async middleware for deleting a property
+export async function deleteProperty(ctx, next) {
+    //get the property id from the request
+    const id = ctx.params.id;
+    //Find the property using the ID and remove it from the DB
+    await Property.findByIdAndRemove(id, (err) => {
+        if(err){
+            console.log("This property can't be removed");
+            console.log(err);
+        } else {
+            ctx.redirect('/api/property/show');           
+        }
+    });
     
     //continue after middleware is done
     await next();

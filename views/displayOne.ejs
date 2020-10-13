@@ -27,8 +27,13 @@
 						<%= property.description %>
 					</p> 
 					<p>
-
-					</p>				
+                        <a href="/api/property/show/<%= property._id %>/edit">Edit</a>
+					</p>
+                    <form action="/api/property/show/<%= property._id %>?_method=DELETE" method="POST">       
+                        <button>
+                            Delete
+                        </button>
+                    </form>
 				</div>
 			</div>
 		</div>
