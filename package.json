@@ -26,15 +26,12 @@
     "koa-router": "^9.4.0",
     "koa-session": "^6.0.0",
     "koa-views": "^6.3.1",
-    "method-override": "^3.0.0",
     "mongodb": "^3.6.2",
     "mongoose": "^5.10.7",
     "mongoose-unique-validator": "^2.0.3",
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",
     "passport-custom": "^1.1.1",
-    "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^6.0.1"
   }
 }

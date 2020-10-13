@@ -2,6 +2,7 @@ import Router               from '@koa/router';
 import passport             from 'koa-passport';
 import User                 from '../../models/user.js';
 import Property             from '../../models/property.js';
+//get all middlewares for the routes
 import { create, display, displayOne, isOwner, edit, update, deleteProperty } from '../../middleware/middlewares.js';
 
 //Setting up default path to be /api

@@ -32,11 +32,12 @@ export async function register(ctx, next) {
             await user.save();
             return passport.authenticate('email', (err, user, info, status) => {
                 if (user) {
-                  ctx.login(user);
-                  ctx.redirect('/api/property');
+                    //redirect to the property page
+                    ctx.login(user);
+                    ctx.redirect('/api/property');
                 } else {
-                  ctx.status = 400;
-                  ctx.body = { status: 'error' };
+                    ctx.status = 400;
+                    ctx.body = { status: 'error' };
                 }
               })(ctx);
             
@@ -155,7 +156,8 @@ export async function displayOne(ctx, next) {
 }
 
 //TODO - add auth check
-//async middleware for edit a property
+//
+//async middleware that allows the user to edit a property
 export async function edit(ctx, next) {
     //get the property id from the request
     const id = ctx.params.id;
@@ -189,6 +191,7 @@ export async function isOwner(ctx, next) {
                 //continue after middleware is done
                 console.log("User is the owner");
             } else {
+                //if the owner is different it returns to main page
                 ctx.redirect('/api/');
             }
         }
@@ -198,7 +201,7 @@ export async function isOwner(ctx, next) {
     await next();
 }
 
-//async middleware for displaying as pecific property info
+//async middleware for updating the info of a property
 export async function update(ctx, next) {
     //get all properties from the DB
     console.log(ctx.request.body.property)
