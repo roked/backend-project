@@ -1,8 +1,7 @@
-//============
-//USER MODEL//
-//============
-
-//import the database and hash lib
+/**
+* @description The user model - contains the User schema and also two user methods
+* @author Mitko Donchev
+*/
 import mongoose from 'mongoose';
 import crypto   from 'crypto';
 
@@ -42,6 +41,7 @@ UserSchema.methods.validPassword = function(pass) {
     //The password provided by the user is hashed again with the stored salt
     //The salt is pulled using the email provided
     let hash = crypto.pbkdf2Sync(pass, this.salt, 40000, 512, 'sha512').toString('hex');
+   
     
     //Comparing if the new hash is the same as the one hashed previously
     return this.hash === hash

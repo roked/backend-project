@@ -1,0 +1,381 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "defaultTitle",
+    "description": "defaultDescription",
+    "version": "0.1",
+    "name": "Mitko Donchev",
+    "email": "donchevm@coventry.ac.uk"
+  },
+  "servers": [
+    {
+      "url": "https://program-nissan-3000.codio-box.uk"
+    }
+  ],
+  "paths": {
+    "/api/user/login": {
+      "post": {
+        "description": "Auto generated using Swagger Inspector",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "0": {
+                  "value": "{\r\n   \"email\": \"gaga@mail.com\",\r\n   \"password\": \"test1234\"\r\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "text/html; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://program-nissan-3000.codio-box.uk"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://program-nissan-3000.codio-box.uk"
+        }
+      ]
+    },
+    "/api/user/register": {
+      "post": {
+        "description": "Auto generated using Swagger Inspector",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  },
+                  "signUpCode": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "0": {
+                  "value": "{\r\n   \"email\": \"testUsers@mail.com\",\r\n   \"username\": \"testUsers\",\r\n   \"password\": \"test1\",\r\n   \"signUpCode\": \"we_sell_houses_agent\"\r\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://program-nissan-3000.codio-box.uk"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://program-nissan-3000.codio-box.uk"
+        }
+      ]
+    },
+    "/api/property/show": {
+      "get": {
+        "description": "Auto generated using Swagger Inspector",
+        "responses": {
+          "200": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "text/html; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://program-nissan-3000.codio-box.uk"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://program-nissan-3000.codio-box.uk"
+        }
+      ]
+    },
+    "/api/property/new": {
+      "post": {
+        "description": "Auto generated using Swagger Inspector",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string"
+                  },
+                  "features": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "price": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "0": {
+                  "value": "{\r\n   \"name\": \"Big house\",\r\n   \"price\": \"25500\",\r\n   \"image\": \"https://images.unsplash.com/photo-1576941089067-2de3c901e126?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1443&q=80\",\r\n   \"description\": \"testProperty\",\r\n   \"category\": \"commercial\",\r\n   \"status\": \"high priority\",\r\n   \"location\": \"West Midlands\",\r\n   \"features\": [\"has garden\"]\r\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "text/html; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://program-nissan-3000.codio-box.uk"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://program-nissan-3000.codio-box.uk"
+        }
+      ]
+    },
+    "/api/property/show/{id}/edit": {
+      "get": {
+        "description": "Auto generated using Swagger Inspector",
+        "responses": {
+          "200": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "text/html; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://program-nissan-3000.codio-box.uk"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://program-nissan-3000.codio-box.uk"
+        }
+      ]
+    },
+    "/api/property/show/5f86c6b3771ddc06002ad052": {
+      "get": {
+        "description": "Auto generated using Swagger Inspector",
+        "responses": {
+          "200": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "text/html; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://program-nissan-3000.codio-box.uk"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://program-nissan-3000.codio-box.uk",
+          "/api/property/show/{id}": null
+        }
+      ],
+      "post": {
+        "description": "Auto generated using Swagger Inspector",
+        "parameters": [
+          {
+            "name": "_method",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "PUT"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string"
+                  },
+                  "features": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "price": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "0": {
+                  "value": "{\r\n   \"name\": \"Big house\",\r\n   \"price\": \"25500\",\r\n   \"image\": \"https://images.unsplash.com/photo-1576941089067-2de3c901e126?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1443&q=80\",\r\n   \"description\": \"Updated property second time\",\r\n   \"category\": \"commercial\",\r\n   \"status\": \"high priority\",\r\n   \"location\": \"West Midlands\",\r\n   \"features\": [\"has garden\"]\r\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "text/html; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://program-nissan-3000.codio-box.uk"
+          }
+        ]
+      }
+    },
+    "/api/property/show/{id}": {
+      "delete": {
+        "description": "Auto generated using Swagger Inspector",
+        "responses": {
+          "405": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://program-nissan-3000.codio-box.uk"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://program-nissan-3000.codio-box.uk"
+        }
+      ]
+    }
+  }
+}

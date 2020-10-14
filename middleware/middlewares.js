@@ -1,20 +1,32 @@
-//===========
-//MIDDLEWARES
-//===========
-
+/**
+* @description A module which contains all middlewares used during CRUD operations
+* @author Mitko Donchev
+*/
 import Router        from '@koa/router';
 import passport      from 'koa-passport';
 import { authEmail } from '../routes/auth.js';
 import User          from '../models/user.js';
 import Property      from '../models/property.js';
+//Get the sign-up code from the config
+import { signUpCode as secret } from '../routes/config.js';
 
 //async middleware for handling registration
 export async function register(ctx, next) {
     //Store all values from the body into variables
-    const { username, email, password } = ctx.request.body;
+    const { username, email, password, signUpCode } = ctx.request.body;
     
     //User validation
-    if(username && email && password) {
+    if(username && email && password && signUpCode) {
+        
+        //check if the sign up code is valid
+        if(signUpCode !== secret){
+            ctx.status = 400;
+            ctx.body = {
+                status: 'error',
+                message: 'The sign-up code is wrong or not completed, please try again!'
+            }; 
+        }
+        
         let user = await User.findOne({ email });
         let user1 = await User.findOne({ username });
               
@@ -37,7 +49,7 @@ export async function register(ctx, next) {
                     ctx.redirect('/api/property');
                 } else {
                     ctx.status = 400;
-                    ctx.body = { status: 'error' };
+                    ctx.body = { status: 'User not allowed.' };
                 }
               })(ctx);
             
@@ -231,6 +243,30 @@ export async function deleteProperty(ctx, next) {
             console.log(err);
         } else {
             ctx.redirect('/api/property/show');           
+        }
+    });
+    
+    //continue after middleware is done
+    await next();
+}
+
+//TODO - remove
+//async middleware to clear the DB
+export async function deleteAll(ctx, next) {
+    //Delete everything from the DB on users and properties
+    await User.deleteMany({}, (err) => {
+        if(err){
+            console.log(err);
+        } else {
+            console.log("User DB clear");          
+        }
+    });
+    
+    await Property.deleteMany({}, (err) => {
+        if(err){
+            console.log(err);
+        } else {
+            console.log("Property DB clear");          
         }
     });
     

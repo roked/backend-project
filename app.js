@@ -1,4 +1,7 @@
-//Import npm libraries etc.
+/**
+* @description Main JS file which runs the server and combines all functionality.
+* @author Mitko Donchev
+*/
 import Koa             from 'koa'; 
 import views           from 'koa-views';
 import mongoose        from 'mongoose';
@@ -38,6 +41,9 @@ app.use(router.allowedMethods())
 let port          = process.env.PORT   || 3000;
 let connectUri    = process.env.URL    || 'mongodb://localhost:27017/back_end';
 
+/**
+ * @param {String} URI
+ */
 //Connect to Mongoose
 mongoose.connect(connectUri, {
   useUnifiedTopology: true,
@@ -53,4 +59,5 @@ mongoose.connect(connectUri, {
 //Start server on port 3000
 app.listen(port, () => console.log('Web Server UP!'));
 
+//Export the app
 export default app;

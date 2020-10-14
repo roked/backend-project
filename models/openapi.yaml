@@ -1,0 +1,208 @@
+--- 
+info: 
+  description: defaultDescription
+  email: donchevm@coventry.ac.uk
+  name: "Mitko Donchev"
+  title: defaultTitle
+  version: "0.1"
+openapi: "3.0.1"
+paths: 
+  /api/property/new: 
+    post: 
+      description: "Let new property for sale"
+      requestBody: 
+        content: 
+          application/json: 
+            examples: 
+              ? "0"
+              : 
+                value: |-
+                    {
+                       "name": "Big house",
+                       "price": "25500",
+                       "image": "https://images.unsplash.com/photo-1576941089067-2de3c901e126?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1443&q=80",
+                       "description": "testProperty",
+                       "category": "commercial",
+                       "status": "high priority",
+                       "location": "West Midlands",
+                       "features": ["has garden"]
+                    }
+            schema: 
+              properties: 
+                category: 
+                  type: string
+                description: 
+                  type: string
+                features: 
+                  items: 
+                    type: string
+                  type: array
+                image: 
+                  type: string
+                location: 
+                  type: string
+                name: 
+                  type: string
+                price: 
+                  type: string
+                status: 
+                  type: string
+              type: object
+      responses: 
+        ? "200"
+        : 
+          content: 
+            ? "text/html; charset=utf-8"
+            : 
+              examples: {}
+              schema: 
+                type: string
+          description: "New property created"
+      servers: 
+        - 
+          url: "https://program-nissan-3000.codio-box.uk"
+    servers: 
+      - 
+        url: "https://program-nissan-3000.codio-box.uk"
+  /api/property/show: 
+    get: 
+      description: "Show all properties"
+      responses: 
+        ? "200"
+        : 
+          content: 
+            ? "text/html; charset=utf-8"
+            : 
+              examples: {}
+              schema: 
+                type: string
+          description: "All poperties displayed"
+      servers: 
+        - 
+          url: "https://program-nissan-3000.codio-box.uk"
+    servers: 
+      - 
+        url: "https://program-nissan-3000.codio-box.uk"
+  ? "/api/property/show/{id}"
+  : 
+    delete: 
+      description: "Delete property"
+      responses: 
+        ? "200"
+        : 
+          content: 
+            ? "text/plain; charset=utf-8"
+            : 
+              examples: {}
+              schema: 
+                type: string
+          description: "Property successfully deleted"
+      servers: 
+        - 
+          url: "https://program-nissan-3000.codio-box.uk"
+    servers: 
+      - 
+        url: "https://program-nissan-3000.codio-box.uk"
+  ? "/api/property/show/{id}/edit"
+  : 
+    get: 
+      description: "Property owner can edit the info"
+      responses: 
+        ? "200"
+        : 
+          content: 
+            ? "text/html; charset=utf-8"
+            : 
+              examples: {}
+              schema: 
+                type: string
+          description: "User authorized to edit the property"
+      servers: 
+        - 
+          url: "https://program-nissan-3000.codio-box.uk"
+    servers: 
+      - 
+        url: "https://program-nissan-3000.codio-box.uk"
+  /api/user/login: 
+    post: 
+      description: "User login"
+      requestBody: 
+        content: 
+          application/json: 
+            examples: 
+              ? "0"
+              : 
+                value: |-
+                    {
+                       "email": "gaga@mail.com",
+                       "password": "test1234"
+                    }
+            schema: 
+              properties: 
+                email: 
+                  type: string
+                password: 
+                  type: string
+              type: object
+      responses: 
+        ? "200"
+        : 
+          content: 
+            ? "text/html; charset=utf-8"
+            : 
+              examples: {}
+              schema: 
+                type: string
+          description: "Successfuly loged in."
+      servers: 
+        - 
+          url: "https://program-nissan-3000.codio-box.uk"
+    servers: 
+      - 
+        url: "https://program-nissan-3000.codio-box.uk"
+  /api/user/register: 
+    post: 
+      description: "User registration"
+      requestBody: 
+        content: 
+          application/json: 
+            examples: 
+              ? "0"
+              : 
+                value: |-
+                    {
+                       "email": "testUsers@mail.com",
+                       "username": "testUsers",
+                       "password": "test1",
+                       "signUpCode": "we_sell_houses_agent"
+                    }
+            schema: 
+              properties: 
+                email: 
+                  type: string
+                password: 
+                  type: string
+                signUpCode: 
+                  type: string
+                username: 
+                  type: string
+              type: object
+      responses: 
+        ? "200"
+        : 
+          content: 
+            ? "application/json; charset=utf-8"
+            : 
+              examples: {}
+              schema: 
+                type: string
+          description: "Successfuly completed the registration"
+      servers: 
+        - 
+          url: "https://program-nissan-3000.codio-box.uk"
+    servers: 
+      - 
+        url: "https://program-nissan-3000.codio-box.uk"
+servers: 
+  - 
+    url: "https://program-nissan-3000.codio-box.uk"

@@ -1,3 +1,7 @@
+/**
+* @description Property endpoints 
+* @author Mitko Donchev
+*/
 import Router               from '@koa/router';
 import passport             from 'koa-passport';
 import User                 from '../../models/user.js';
@@ -7,12 +11,12 @@ import { create, display, displayOne, isOwner, edit, update, deleteProperty } fr
 
 //Setting up default path to be /api
 const router = new Router({
-    prefix: '/api/property'
+    prefix: '/api'
 });
 
 //TEST PAGE
 //TODO - Remove after finish testing
-router.get('/', async(ctx) => {
+router.get('/property', async(ctx) => {
     //check if the user is loged in
     if (ctx.isAuthenticated()) {       
         console.log(ctx.isAuthenticated())
@@ -28,22 +32,22 @@ router.get('/', async(ctx) => {
 });
 
 //Create new property endpoint
-router.post('/new', create);
+router.post('/property/new', create);
 
 //Show all properties
-router.get('/show', display);
+router.get('/property/show', display);
 
 //Check info about a specific property ifo
-router.get('/show/:id', displayOne);
+router.get('/property/show/:id', displayOne);
 
 //Edit a property
-router.get('/show/:id/edit', isOwner, edit);
+router.get('/property/show/:id/edit', isOwner, edit);
 
 //Update property info
-router.put('/show/:id', update);   
+router.put('/property/show/:id', update);   
 
 //Delete property
-router.delete('/show/:id', isOwner, deleteProperty);
+router.delete('/property/show/:id', isOwner, deleteProperty);
 
 //Export the router
 export default router;

@@ -1,3 +1,7 @@
+/**
+* @description A module to add all npm dependecies to the app
+* @author Mitko Donchev
+*/
 import compose        from 'koa-compose';
 import convert        from 'koa-convert';
 import logger         from 'koa-logger';

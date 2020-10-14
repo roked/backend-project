@@ -7,17 +7,18 @@
     <body>
         <h1>You made it here!</h1>
         
-        <form action="/api/register" method="POST">
+        <form action="/api/user/register" method="POST">
             <label>REGISTER</label>
             <input type="email" name="email" placeholder="email" required>            
             <input type="text" name="username" placeholder="username" required>
-            <input type="password" name="password" placeholder="password" required>         
+            <input type="password" name="password" placeholder="password" required>    
+            <input type="text" name="signUpCode" placeholder="Sign-Up Code" required>         
             <button>
                 Sign Up!
             </button>
         </form>
         <br>
-        <form action="/api/login" method="POST">
+        <form action="/api/user/login" method="POST">
             <label>LOGIN</label>
             <input type="email" name="email" placeholder="email" required>            
             <input type="password" name="password" placeholder="password" required>         

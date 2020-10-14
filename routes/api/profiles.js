@@ -1,9 +1,15 @@
-//Import JWT (jsonwebtoken) generator and email authentication 
+/**
+* @description User endpoints
+* @author Mitko Donchev
+*/
 import Router        from '@koa/router';
 import passport      from 'koa-passport';
 import { authEmail } from '../auth.js';
 import User          from '../../models/user.js';
 import { register }  from '../../middleware/middlewares.js'
+
+//RODO - REMOVE
+//import { deleteAll } from '../../middleware/middlewares.js';
 
 //Setting up default path to be /api
 const router = new Router({
@@ -21,7 +27,7 @@ router.get('/', async(ctx) => {
 });
 
 //Login endpoint
-router.post('/login', authEmail(), async(ctx) => {
+router.post('/user/login', authEmail(), async(ctx) => {
     try {
         await ctx.redirect('/api/property/show');
     } catch(err) {
@@ -30,7 +36,7 @@ router.post('/login', authEmail(), async(ctx) => {
 });
 
 //Register endpoint
-router.post('/register', register);
+router.post('/user/register', register);
 
 //Export the router
 export default router;

@@ -23,7 +23,7 @@ npx nodemon app.js
 
 You must run:
 ```javascript
-npm i -s @koa/router crypto ejs koa koa-bodyparser koa-compose koa-convert koa-cors koa-logger koa-passport koa-session koa-views mongodb mongoose passport passport-custom passport-local koa-methodoverride
+npm i -s @koa/router crypto ejs koa koa-bodyparser koa-compose koa-convert koa-cors koa-logger koa-passport koa-session koa-views mongodb mongoose passport passport-custom passport-local koa-methodoverride koa-mount koa-static 
 ```
 
 ```javascript
@@ -39,6 +39,8 @@ npm i -s @koa/router crypto ejs koa koa-bodyparser koa-compose koa-convert koa-c
     "koa-methodoverride": "^2.0.0",
     "koa-passport": "^4.1.3",
     "koa-session": "^6.0.0",
+    "koa-mount": "^4.0.0",
+    "koa-static": "^5.0.0",
     "koa-views": "^6.3.1",
     "mongodb": "^3.6.2",
     "mongoose": "^5.10.7",
@@ -66,3 +68,16 @@ inside the package.json file in order to use ES6
 
 4. The user can edit or delete a property sold by them.
 
+# OpenAPI and JSDoc documentation is available
+
+If you want to check the OpenAPI and JSDoc (with schemas) you have to run:
+
+```javascript
+  npx nodemon docs.js
+``` 
+
+Two routes follow:
+
+```javascript
+   '/' and '/openapi'
+``` 
