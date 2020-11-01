@@ -34,7 +34,7 @@ router.get('/property', async(ctx) => {
 //Create new property endpoint
 router.post('/property/new', create);
 
-//Show all properties
+//Get all properties
 router.get('/property/show', display);
 
 //Check info about a specific property ifo

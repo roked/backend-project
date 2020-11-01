@@ -2,17 +2,25 @@
 * @description Main JS file which runs the server and combines all functionality.
 * @author Mitko Donchev
 */
-import Koa             from 'koa'; 
-import views           from 'koa-views';
-import mongoose        from 'mongoose';
-import bodyParser      from 'koa-bodyparser';
-import session         from 'koa-session';
-import passport        from 'koa-passport';
-import middleware      from './middleware/index.js';
-import auth            from './routes/auth.js';
-import router          from './routes/index.js';
+import Koa        from 'koa'; 
+import views      from 'koa-views';
+import mongoose   from 'mongoose';
+import bodyParser from 'koa-bodyparser';
+import session    from 'koa-session';
+import passport   from 'koa-passport';
+import middleware from './middleware/index.js';
+import auth       from './routes/auth.js';
+import router     from './routes/index.js';
+import cors       from '@koa/cors';
 
 const app = new Koa();
+
+//Setting up cors
+const options = {
+  origin: true,
+  credentials: true
+};
+app.use(cors(options));
 
 //Config session
 app.keys = ['my-secret-key'];

@@ -129,22 +129,20 @@ export async function create(ctx, next) {
     }
 }
 
-//async middleware for displaying all properties 
-export async function display(ctx, next) {
+//async middleware for getting all properties from the DB
+export async function display(ctx) {
     //get all properties from the DB
-    let property = await Property.find({}, (err, property) => {
+    const property = await Property.find({}, (err, property) => {
         if(err){
             console.log("No properties to show");
             console.log(err);
         } else {
-            console.log(property);           
+            ctx.body = property;         
         }
     });
-    //Render the test page and push the properties
-    await ctx.render('display', {properties: property});
     
-    //continue after middleware is done
-    await next();
+    //Return all properties
+    return property;
 }
 
 //async middleware for displaying as pecific property info
