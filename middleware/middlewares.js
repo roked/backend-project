@@ -129,10 +129,10 @@ export async function create(ctx, next) {
     }
 }
 
-//async middleware for getting all properties from the DB
+//async middleware for retrieving all properties from the DB
 export async function display(ctx) {
     //get all properties from the DB
-    const property = await Property.find({}, (err, property) => {
+    const properties = await Property.find({}, (err, property) => {
         if(err){
             console.log("No properties to show");
             console.log(err);
@@ -142,11 +142,11 @@ export async function display(ctx) {
     });
     
     //Return all properties
-    return property;
+    return properties;
 }
 
-//async middleware for displaying as pecific property info
-export async function displayOne(ctx, next) {
+//async middleware for retrieving info about specific property from DB
+export async function displayOne(ctx) {
     //get the property id from the request
     const id = ctx.params.id;
     //check if it exist and find the property corresponding to the id
@@ -155,14 +155,12 @@ export async function displayOne(ctx, next) {
             console.log("This property has no info.");
             console.log(err);
         } else {
-            console.log(property);           
+            ctx.body = property;         
         }
     });
-    //Render the test page and push the properties
-    await ctx.render('displayOne', {property: property});
     
-    //continue after middleware is done
-    await next();
+    //Return the property
+    return property;
 }
 
 //TODO - add auth check
