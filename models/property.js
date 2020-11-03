@@ -28,7 +28,7 @@ const PropertySchema = new mongoose.Schema({
         type:String,
         required: true
     },
-    features:[{type: String}],
+    features:[],
     location:{
         type:String,
         required: true

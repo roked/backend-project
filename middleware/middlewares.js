@@ -72,27 +72,23 @@ export async function register(ctx, next) {
 }
 
 //async middleware for handling property creation
-export async function create(ctx, next) {
+export async function create(ctx) {
     //Store all values from the body into variables
     const { name, price, image, description, category, status, 
-           location, features1, features2, features3 } = ctx.request.body;   
+           location, features } = ctx.request.body;   
+    
+    console.log(name);
     
     //Set up the owner/seller of the property
-     const author = {
-        id: ctx.state.user._id,
-        username: ctx.state.user.username
-    }
+//      const author = {
+//         id: ctx.state.user._id,
+//         username: ctx.state.user.username
+//     }
     
-    //store all features from the checkboxes 
-    const features = [features1, features2, features3];
-    const selectedFeatures = [];
-    
-    //get only the checked features
-    for (let feature of features){
-        if(feature){
-            selectedFeatures.push(feature);
-        }
-    }
+    const author = {
+        id: "5f86c536771ddc06002ad051",
+        username: 'test1234'
+    }    
     
     //try to get an existing property with the same name/title
     let property = await Property.findOne({ name });
@@ -108,18 +104,15 @@ export async function create(ctx, next) {
         property.description = description; 
         property.category = category;
         property.status = status;
-        property.features = selectedFeatures;
+        property.features = features;
         property.location = location; 
         property.author = author; 
                 
         //add new property
         await property.save().then(() => {
-                    console.log(property);
-                    ctx.redirect('/api/property/show'); 
-                }).catch(next);
-        
-        //continue after middleware is done
-        await next();
+                    ctx.body = property;
+                    console.log(property)
+                }).catch(err => ctx.body = err);
     } else {
         ctx.status = 400;
         ctx.body = {
@@ -131,18 +124,22 @@ export async function create(ctx, next) {
 
 //async middleware for retrieving all properties from the DB
 export async function display(ctx) {
-    //get all properties from the DB
-    const properties = await Property.find({}, (err, property) => {
-        if(err){
-            console.log("No properties to show");
-            console.log(err);
-        } else {
-            ctx.body = property;         
-        }
-    });
-    
-    //Return all properties
-    return properties;
+    try {        
+        //get all properties from the DB
+        const properties = await Property.find({}, (err, property) => {
+            if(err){
+                console.log("No properties to show");
+                console.log(err);
+            } else {
+                ctx.body = property;         
+            }
+        });
+        
+        //Return all properties
+        return properties;
+    } catch(err) {
+        console.log(err);
+    } 
 }
 
 //async middleware for retrieving info about specific property from DB
