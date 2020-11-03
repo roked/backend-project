@@ -2,10 +2,14 @@
 * @description Property endpoints 
 * @author Mitko Donchev
 */
-import Router               from '@koa/router';
-import passport             from 'koa-passport';
-import User                 from '../../models/user.js';
-import Property             from '../../models/property.js';
+import Router        from '@koa/router';
+import passport      from 'koa-passport';
+import multer        from '@koa/multer';
+import User          from '../../models/user.js';
+import Property      from '../../models/property.js';
+
+const upload = multer();
+
 //get all middlewares for the routes
 import { create, display, displayOne, isOwner, edit, update, deleteProperty } from '../../middleware/middlewares.js';
 
@@ -32,7 +36,10 @@ router.get('/property', async(ctx) => {
 });
 
 //Create new property endpoint
-router.post('/property/new', create);
+router.post('/property/new', upload.fields([{
+      name: 'file',
+      maxCount: 3
+    }]), create);
 
 //Get all properties
 router.get('/property/show', display);

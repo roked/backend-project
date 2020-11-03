@@ -13,9 +13,7 @@ const PropertySchema = new mongoose.Schema({
         type:String,
         required: true
     },
-    image:{
-        type: String  
-    },
+    image:[],
     category:{
         type:String,
         required: true

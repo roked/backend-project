@@ -8,6 +8,7 @@ import mongoose   from 'mongoose';
 import bodyParser from 'koa-bodyparser';
 import session    from 'koa-session';
 import passport   from 'koa-passport';
+import serve      from 'koa-static';
 import middleware from './middleware/index.js';
 import auth       from './routes/auth.js';
 import router     from './routes/index.js';
@@ -30,6 +31,9 @@ app.use(session(app));
 app.use(passport.initialize());
 // persistent login sessions 
 app.use(passport.session());
+
+//use the public folder
+app.use(serve('public'));
 
 //Install the "ejs" package (not using handlebar because it is LOGICLESS - no JS script)
 app.use(views(`views`, { extension: 'ejs' }, {map: { ejs: 'ejs' }}));

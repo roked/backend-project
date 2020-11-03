@@ -7,6 +7,7 @@ import passport      from 'koa-passport';
 import { authEmail } from '../routes/auth.js';
 import User          from '../models/user.js';
 import Property      from '../models/property.js';
+import fs            from 'fs-extra'
 //Get the sign-up code from the config
 import { signUpCode as secret } from '../routes/config.js';
 
@@ -74,10 +75,13 @@ export async function register(ctx, next) {
 //async middleware for handling property creation
 export async function create(ctx) {
     //Store all values from the body into variables
-    const { name, price, image, description, category, status, 
+    const { name, price, description, category, status, 
            location, features } = ctx.request.body;   
     
-    console.log(name);
+    //get each image name from the request body
+    const images = await getFile(ctx) 
+    
+    console.log(images);
     
     //Set up the owner/seller of the property
 //      const author = {
@@ -100,7 +104,7 @@ export async function create(ctx) {
         //Add the information of the new property
         property.name = name;
         property.price = price;     
-        property.image = image;
+        property.image = images;
         property.description = description; 
         property.category = category;
         property.status = status;
@@ -265,4 +269,30 @@ export async function deleteAll(ctx, next) {
     
     //continue after middleware is done
     await next();
+}
+
+/**
+ * The function to get the file from the frontend and store it.
+ *
+ * @name Get file function
+ * @params {Object} ctx - context
+ * @returns {String} the name of the file which will be stored in the DB and used as reference
+ */
+async function getFile(ctx) {
+	const images = ctx.request.files.file;
+    console.log(images)
+    const names = [];
+	if(images.length === 0) return names.push('default.png');
+	try {
+        for(const image of images){
+            await fs.writeFile(`public/uploads/${image.originalname}`, image.buffer, (err) => {
+                if (err) throw err;
+                console.log('The file has been saved!');
+            });        
+            names.push(image.originalname);
+        }
+        return names;
+	} catch(err) {
+		console.log(err.message);
+	}
 }
