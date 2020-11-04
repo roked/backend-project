@@ -135,12 +135,19 @@ export async function display(ctx) {
                 console.log("No properties to show");
                 console.log(err);
             } else {
+                       
+                //attach the image to the property object
+                for(const prop of property){
+                    //get the image in base64 format
+                    const image = loadFile(prop.image[0]); 
+                    //replace the image name with the image file
+                    prop.image = image;
+                }                    
+                
+                //set the body which will be send to the frontend
                 ctx.body = property;         
             }
-        });
-        
-        //Return all properties
-        return properties;
+        }); 
     } catch(err) {
         console.log(err);
     } 
@@ -148,20 +155,22 @@ export async function display(ctx) {
 
 //async middleware for retrieving info about specific property from DB
 export async function displayOne(ctx) {
-    //get the property id from the request
-    const id = ctx.params.id;
-    //check if it exist and find the property corresponding to the id
-    let property = await Property.findById(id, (err, property) => {
-        if(err || !property){
-            console.log("This property has no info.");
-            console.log(err);
-        } else {
-            ctx.body = property;         
-        }
-    });
-    
-    //Return the property
-    return property;
+    try {   
+        //get the property id from the request
+        const id = ctx.params.id;
+        //check if it exist and find the property corresponding to the id
+        let property = await Property.findById(id, (err, property) => {
+            if(err || !property){
+                console.log("This property has no info.");
+                console.log(err);
+            } else {
+                //set the body which will be send to the frontend
+                ctx.body = property;         
+            }
+        });  
+    } catch(err) {
+        console.log(err);
+    } 
 }
 
 //TODO - add auth check
@@ -292,6 +301,33 @@ async function getFile(ctx) {
             names.push(image.originalname);
         }
         return names;
+	} catch(err) {
+		console.log(err.message);
+	}
+}
+
+/**
+ * The function to get the image from the server and format it in base64 string.
+ *
+ * @name Get image function
+ * @params {String} fileName - the name of the image
+ * @returns {String} objImg - the base64 string format of the image
+ */
+function loadFile(fileName) {
+    //objImg will store the base64 string string
+	const objImg = {img:null}
+    
+	try {
+        //read the file from the server dir
+        let bitMap= fs.readFileSync(`public/uploads/${fileName}`, (err) => {
+           if (err) console.log(err);
+        });                    
+        
+        //convert image to base64 string
+        objImg.img = new Buffer.from(bitMap).toString("base64");     
+        
+        //return the image
+        return objImg;
 	} catch(err) {
 		console.log(err.message);
 	}
