@@ -76,12 +76,16 @@ export async function register(ctx, next) {
 export async function create(ctx) {
     //Store all values from the body into variables
     const { name, price, description, category, status, 
-           location, features } = ctx.request.body;   
+           location } = ctx.request.body;   
+    
+    //get features as they will be modified
+    let { features } = ctx.request.body; 
     
     //get each image name from the request body
-    const images = await getFile(ctx) 
+    const images = await getFile(ctx);
     
-    console.log(images);
+    //convert features from string to array
+    features = features.split(',');
     
     //Set up the owner/seller of the property
 //      const author = {
@@ -118,6 +122,7 @@ export async function create(ctx) {
                     console.log(property)
                 }).catch(err => ctx.body = err);
     } else {
+        console.log("Property name already in use!")
         ctx.status = 400;
         ctx.body = {
             status: 'error',
@@ -134,16 +139,14 @@ export async function display(ctx) {
             if(err){
                 console.log("No properties to show");
                 console.log(err);
-            } else {
-                       
+            } else {                       
                 //attach the image to the property object
                 for(const prop of property){
                     //get the image in base64 format
                     const image = loadFile(prop.image[0]); 
                     //replace the image name with the image file
                     prop.image = image;
-                }                    
-                
+                }                                  
                 //set the body which will be send to the frontend
                 ctx.body = property;         
             }
@@ -164,6 +167,10 @@ export async function displayOne(ctx) {
                 console.log("This property has no info.");
                 console.log(err);
             } else {
+                //get the image in base64 format
+                const image = loadFile(property.image[0]); 
+                //replace the image name with the image file
+                property.image = image;     
                 //set the body which will be send to the frontend
                 ctx.body = property;         
             }
@@ -289,9 +296,12 @@ export async function deleteAll(ctx, next) {
  */
 async function getFile(ctx) {
 	const images = ctx.request.files.file;
-    console.log(images)
     const names = [];
-	if(images.length === 0) return names.push('default.png');
+    console.log(images)
+	if(!images || images.length === 0) {
+        names.push('default.png');
+        return names;
+    }
 	try {
         for(const image of images){
             await fs.writeFile(`public/uploads/${image.originalname}`, image.buffer, (err) => {
