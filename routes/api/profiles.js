@@ -16,20 +16,11 @@ const router = new Router({
     prefix: '/api'
 });
 
-//TEST PAGE
-//TODO - Remove after finish testing
-router.get('/', async(ctx) => {
-    try {
-        await ctx.render('index');
-    } catch(err) {
-        console.log(err.message);
-    }
-});
-
 //Login endpoint
 router.post('/user/login', authEmail(), async(ctx) => {
     try {
-        await ctx.redirect('/api/property/show');
+        ctx.body = 'Successfully authorized';
+        return true; 
     } catch(err) {
         console.log(err.message);
     }

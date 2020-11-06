@@ -7,63 +7,67 @@ import passport      from 'koa-passport';
 import { authEmail } from '../routes/auth.js';
 import User          from '../models/user.js';
 import Property      from '../models/property.js';
-import fs            from 'fs-extra'
+import fs            from 'fs-extra';
+
 //Get the sign-up code from the config
 import { signUpCode as secret } from '../routes/config.js';
 
 //async middleware for handling registration
-export async function register(ctx, next) {
+export async function register(ctx) {
     //Store all values from the body into variables
     const { username, email, password, signUpCode } = ctx.request.body;
     
     //User validation
     if(username && email && password && signUpCode) {
-        
         //check if the sign up code is valid
-        if(signUpCode !== secret){
+        if(signUpCode !== secret.secret){
+            console.log('The sign-up code is wrong or not completed, please try again!');
             ctx.status = 400;
             ctx.body = {
                 status: 'error',
                 message: 'The sign-up code is wrong or not completed, please try again!'
             }; 
-        }
-        
-        let user = await User.findOne({ email });
-        let user1 = await User.findOne({ username });
-              
-        //TODO - Improve username/email check for duplicates function
-        //if the user is not registred
-        if(!user || !user1) {
-            user = new User();
-            
-            //Add the information of the new user
-            user.username = username;
-            user.email = email;     
-            //password is hashed and securely stored
-            user.hashPassword(password);        
-            
-            await user.save();
-            return passport.authenticate('email', (err, user, info, status) => {
-                if (user) {
-                    //redirect to the property page
-                    ctx.login(user);
-                    ctx.redirect('/api/property');
-                } else {
-                    ctx.status = 400;
-                    ctx.body = { status: 'User not allowed.' };
-                }
-              })(ctx);
-            
-            //continue after middleware is done
-            await next();
         } else {
-            ctx.status = 400;
-            ctx.body = {
-                status: 'error',
-                message: 'E-mail/username already registered!'
-            };
+            let user = await User.findOne({ email });
+            let user1 = await User.findOne({ username });
+
+            //TODO - Improve username/email check for duplicates function
+            //if the user is not registred
+            if(!user && !user1) {
+                user = new User();
+
+                //Add the information of the new user
+                user.username = username;
+                user.email = email;     
+                //password is hashed and securely stored
+                user.hashPassword(password);        
+
+                await user.save();
+                return passport.authenticate('email', (err, user, info, status) => {
+                    if (user) {
+                        console.log('Success');
+                        //end
+                        ctx.login(user);
+                        ctx.body = user;
+                    } else {
+                        console.log('Error');
+                        ctx.status = 400;
+                        ctx.body = { status: 'error' ,
+                                     message: 'User not allowed.'
+                                   };
+                    }
+                  })(ctx);            
+            } else {
+                console.log('E-mail/username already registered!');
+                ctx.status = 400;
+                ctx.body = {
+                    status: 'error',
+                    message: 'E-mail/username already registered!'
+                };
+            }
         }
     } else {
+        console.log('Email, username or password field is empty!');        
         ctx.status = 400;
         ctx.body = {
             status: 'error',
@@ -119,7 +123,7 @@ export async function create(ctx) {
         //add new property
         await property.save().then(() => {
                     ctx.body = property;
-                    console.log(property)
+                    console.log("New property created!");
                 }).catch(err => ctx.body = err);
     } else {
         console.log("Property name already in use!")
@@ -246,7 +250,7 @@ export async function update(ctx, next) {
 }
 
 //async middleware for deleting a property
-export async function deleteProperty(ctx, next) {
+export async function deleteProperty(ctx) {
     //get the property id from the request
     const id = ctx.params.id;
     //Find the property using the ID and remove it from the DB
@@ -255,12 +259,14 @@ export async function deleteProperty(ctx, next) {
             console.log("This property can't be removed");
             console.log(err);
         } else {
-            ctx.redirect('/api/property/show');           
+            console.log("Property is deleted!")
+            ctx.status = 200;
+            ctx.body = {
+                status: 'success',
+                message: 'Property is deleted!'
+            };         
         }
-    });
-    
-    //continue after middleware is done
-    await next();
+    });    
 }
 
 //TODO - remove

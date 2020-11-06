@@ -19,10 +19,11 @@ export default new CustomStrategy(async(ctx, done) => {
             if(!user || !user.validPassword(password)) {
                 done(null, false);
                 console.log('Wrong password.');
-                ctx.redirect('/api/');
+                ctx.body = 'Wrong password.';
             }  
             //Login successful
             console.log('Successfully authorized!');
+            ctx.body = 'Successfully authorized!';
             done(null, user);
         } else {
             console.log('Email/password missing or wrong!');
