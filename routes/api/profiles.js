@@ -20,6 +20,7 @@ const router = new Router({
 router.post('/user/login', authEmail(), async(ctx) => {
     try {
         //after successfull login
+        ctx.session.authenticated === true;
         //get the loged user
         ctx.body = ctx.state.user;
         //send the loged user to the frontend
@@ -31,6 +32,24 @@ router.post('/user/login', authEmail(), async(ctx) => {
 
 //Register endpoint
 router.post('/user/register', register);
+
+//Logout endpoint
+router.get('/user/logout', async (ctx) => {
+    try{
+        if (ctx.session.authenticated === true) {
+            ctx.session.authenticated = false
+            ctx.session.id = undefined
+        }
+        ctx.status = 200;
+        ctx.body = {
+            status: 'success',
+            message: 'User loged out!'
+        }; 
+    } catch(err) {
+        console.log(err.message);
+    }
+      
+});
 
 //Export the router
 export default router;
