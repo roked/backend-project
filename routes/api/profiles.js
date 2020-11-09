@@ -8,7 +8,7 @@ import { authEmail } from '../auth.js';
 import User          from '../../models/user.js';
 import { register }  from '../../middleware/middlewares.js'
 
-//RODO - REMOVE
+//TODO - REMOVE
 //import { deleteAll } from '../../middleware/middlewares.js';
 
 //Setting up default path to be /api
@@ -19,8 +19,11 @@ const router = new Router({
 //Login endpoint
 router.post('/user/login', authEmail(), async(ctx) => {
     try {
-        ctx.body = 'Successfully authorized';
-        return true; 
+        //after successfull login
+        //get the loged user
+        ctx.body = ctx.state.user;
+        //send the loged user to the frontend
+        return ctx.body;
     } catch(err) {
         console.log(err.message);
     }
