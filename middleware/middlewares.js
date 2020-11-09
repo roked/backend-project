@@ -92,15 +92,10 @@ export async function create(ctx) {
     features = features.split(',');
     
     //Set up the owner/seller of the property
-//      const author = {
-//         id: ctx.state.user._id,
-//         username: ctx.state.user.username
-//     }
-    
     const author = {
-        id: "5f86c536771ddc06002ad051",
-        username: 'test1234'
-    }    
+        id: ctx.state.user._id,
+        username: ctx.state.user.username
+    }   
     
     //try to get an existing property with the same name/title
     let property = await Property.findOne({ name });
