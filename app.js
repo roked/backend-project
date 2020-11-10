@@ -1,15 +1,27 @@
-//Import npm libraries etc.
-import Koa             from 'koa'; 
-import views           from 'koa-views';
-import mongoose        from 'mongoose';
-import bodyParser      from 'koa-bodyparser';
-import session         from 'koa-session';
-import passport        from 'koa-passport';
-import middleware      from './middleware/index.js';
-import auth            from './routes/auth.js';
-import router          from './routes/index.js';
+/**
+* @description Main JS file which runs the server and combines all functionality.
+* @author Mitko Donchev
+*/
+import Koa        from 'koa'; 
+import views      from 'koa-views';
+import mongoose   from 'mongoose';
+import bodyParser from 'koa-bodyparser';
+import session    from 'koa-session';
+import passport   from 'koa-passport';
+import serve      from 'koa-static';
+import middleware from './middleware/index.js';
+import auth       from './routes/auth.js';
+import router     from './routes/index.js';
+import cors       from '@koa/cors';
 
 const app = new Koa();
+
+//Setting up cors
+const options = {
+  origin: true,
+  credentials: true
+};
+app.use(cors(options));
 
 //Config session
 app.keys = ['my-secret-key'];
@@ -19,6 +31,9 @@ app.use(session(app));
 app.use(passport.initialize());
 // persistent login sessions 
 app.use(passport.session());
+
+//use the public folder
+app.use(serve('public'));
 
 //Install the "ejs" package (not using handlebar because it is LOGICLESS - no JS script)
 app.use(views(`views`, { extension: 'ejs' }, {map: { ejs: 'ejs' }}));
@@ -38,6 +53,9 @@ app.use(router.allowedMethods())
 let port          = process.env.PORT   || 3000;
 let connectUri    = process.env.URL    || 'mongodb://localhost:27017/back_end';
 
+/**
+ * @param {String} URI
+ */
 //Connect to Mongoose
 mongoose.connect(connectUri, {
   useUnifiedTopology: true,
@@ -53,4 +71,5 @@ mongoose.connect(connectUri, {
 //Start server on port 3000
 app.listen(port, () => console.log('Web Server UP!'));
 
+//Export the app
 export default app;

@@ -1,18 +1,26 @@
-import Router               from '@koa/router';
-import passport             from 'koa-passport';
-import User                 from '../../models/user.js';
-import Property             from '../../models/property.js';
+/**
+* @description Property endpoints 
+* @author Mitko Donchev
+*/
+import Router        from '@koa/router';
+import passport      from 'koa-passport';
+import multer        from '@koa/multer';
+import User          from '../../models/user.js';
+import Property      from '../../models/property.js';
+
+const upload = multer();
+
 //get all middlewares for the routes
 import { create, display, displayOne, isOwner, edit, update, deleteProperty } from '../../middleware/middlewares.js';
 
 //Setting up default path to be /api
 const router = new Router({
-    prefix: '/api/property'
+    prefix: '/api'
 });
 
 //TEST PAGE
 //TODO - Remove after finish testing
-router.get('/', async(ctx) => {
+router.get('/property', async(ctx) => {
     //check if the user is loged in
     if (ctx.isAuthenticated()) {       
         console.log(ctx.isAuthenticated())
@@ -28,22 +36,28 @@ router.get('/', async(ctx) => {
 });
 
 //Create new property endpoint
-router.post('/new', create);
+router.post('/property/new', upload.fields([{
+      name: 'file',
+      maxCount: 3
+    }]), create);
 
-//Show all properties
-router.get('/show', display);
+//Get all properties
+router.get('/property/show', display);
 
-//Check info about a specific property ifo
-router.get('/show/:id', displayOne);
+//Get info about a specific property
+router.get('/property/show/:id', displayOne);
 
 //Edit a property
-router.get('/show/:id/edit', isOwner, edit);
+router.get('/property/show/:id/edit', isOwner, edit);
 
 //Update property info
-router.put('/show/:id', update);   
+router.put('/property/show/:id', upload.fields([{
+      name: 'file',
+      maxCount: 3
+    }]), update);   
 
 //Delete property
-router.delete('/show/:id', isOwner, deleteProperty);
+router.delete('/property/show/:id', isOwner, deleteProperty);
 
 //Export the router
 export default router;

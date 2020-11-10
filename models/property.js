@@ -1,8 +1,7 @@
-//============
-//HOUSE MODEL//
-//============
-
-//import the database and the User model
+/**
+* @description The property model - contains the Property schema
+* @author Mitko Donchev
+*/
 import mongoose from 'mongoose';
 
 const PropertySchema = new mongoose.Schema({
@@ -14,9 +13,7 @@ const PropertySchema = new mongoose.Schema({
         type:String,
         required: true
     },
-    image:{
-        type: String  
-    },
+    image:[],
     category:{
         type:String,
         required: true
@@ -29,11 +26,12 @@ const PropertySchema = new mongoose.Schema({
         type:String,
         required: true
     },
-    features:[{type: String}],
+    features:[],
     location:{
         type:String,
         required: true
     },
+    //Add the saller of the property
     author: {
         id: {
             type: mongoose.Schema.Types.ObjectId,

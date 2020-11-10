@@ -1,4 +1,7 @@
-    //import router and all API routes
+/**
+* @description Index route file which imports all routes and combines them.
+* @author Mitko Donchev
+*/ 
 import Router from '@koa/router';
 import profileRouter from './api/profiles.js'
 import propertyRouter from './api/properties.js'

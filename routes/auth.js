@@ -1,9 +1,11 @@
+/**
+* @description JS file to take care of authentication, passport initialize and user serialize/deserialize
+* @author Mitko Donchev
+*/
 import passport from 'koa-passport';
 import compose  from 'koa-compose';
 import User     from '../models/user.js';
 import pkg      from 'passport-local';
-//Get the secret code from the config
-import { auth as config } from './config.js';
 
 const {Strategy: LocalStrategy} = pkg;
 
@@ -40,8 +42,3 @@ export default function auth() {
 export function authEmail() {
   return passport.authenticate('email');
 }
-
-
-
-
- 
