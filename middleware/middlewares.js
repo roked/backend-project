@@ -12,7 +12,7 @@ import fs            from 'fs-extra';
 //Get the sign-up code from the config
 import { signUpCode as secret } from '../routes/config.js';
 
-//async middleware for handling registration
+//async function for handling registration
 export async function register(ctx) {
     //Store all values from the body into variables
     const { username, email, password, signUpCode } = ctx.request.body;
@@ -76,7 +76,7 @@ export async function register(ctx) {
     }
 }
 
-//async middleware for handling property creation
+//async function for handling property creation
 export async function create(ctx) {
     //Store all values from the body into variables
     const { name, price, description, category, status, 
@@ -85,7 +85,7 @@ export async function create(ctx) {
     //get features as they will be modified
     let { features } = ctx.request.body; 
     
-    //get each image name from the request body
+    //get each image from the request body
     const images = await getFile(ctx);
     
     //convert features from string to array
@@ -130,7 +130,7 @@ export async function create(ctx) {
     }
 }
 
-//async middleware for retrieving all properties from the DB
+//async function for retrieving all properties from the DB
 export async function display(ctx) {
     try {        
         //get all properties from the DB
@@ -155,7 +155,7 @@ export async function display(ctx) {
     } 
 }
 
-//async middleware for retrieving info about specific property from DB
+//async function for retrieving info about specific property from DB
 export async function displayOne(ctx) {
     try {   
         //get the property id from the request
@@ -179,69 +179,115 @@ export async function displayOne(ctx) {
     } 
 }
 
-//TODO - add auth check
-//
-//async middleware that allows the user to edit a property
-export async function edit(ctx, next) {
-    //get the property id from the request
-    const id = ctx.params.id;
-    //check if it exist and find the property corresponding to the id
-    let property = await Property.findById(id, (err, property) => {
-        if(err || !property){
-            console.log("This property has no info.");
-            console.log(err);
-        } else {
-            console.log(property);           
-        }
-    });
-    //Render the test page and push the properties
-    await ctx.render('propertyedit', {property: property});
-    
-    //continue after middleware is done
-    await next();
+//async function that allows the user to edit a property
+export async function edit(ctx) {
+    try{
+        //get the property id from the request
+        const id = ctx.params.id;
+            //check if it exist and find the property corresponding to the id
+            let property = await Property.findById(id, (err, property) => {
+                if(err || !property){
+                    throw new Error("Fail!");
+                } else {
+                    //set the body which will be send to the frontend
+                    ctx.body = property;  
+                }
+            });  
+    } catch(err) {
+        console.log(err);
+        //if the owner is different throw error
+        throw new Error("Something went wrong with the update!");
+    } 
 }
 
 //async middleware to cehck if the user is the owner of the property
 export async function isOwner(ctx, next) {
-    //get the property id from the request and also the user loged in this session
-    const id = ctx.params.id;
-    let property = await Property.findById(id, (err, property) => {
-        if(err || !property){
-            console.log("This property has no info.");
-            ctx.redirect('back');
-        } else {
-            console.log(property.author.id.equals(ctx.state.user._id))
-            if(property.author.id.equals(ctx.state.user._id)){
-                //continue after middleware is done
-                console.log("User is the owner");
+    try{
+        //get the property id from the request and also the user loged in this session
+        const id = ctx.params.id;
+        await Property.findById(id, (err, property) => {
+            if(err || !property){
+               throw new Error("This property has no info!");
             } else {
-                //if the owner is different it returns to main page
-                ctx.redirect('/api/');
+                if(property.author.id.equals(ctx.state.user._id)){
+                    //continue after middleware is done
+                    console.log("User is the owner");
+                } else {
+                    //if the owner is different throw error
+                    throw new Error("User is not the owner!");
+                }
             }
-        }
-    });
-    
-    //continue after middleware is done
+        });        
+    } catch(err) {
+        console.log(err);
+        //if the owner is different throw error
+        throw new Error("User is not the owner!");
+    } 
     await next();
 }
 
-//async middleware for updating the info of a property
-export async function update(ctx, next) {
-    //get all properties from the DB
-    console.log(ctx.request.body.property)
-    const id = ctx.params.id;
-    let property = await Property.findByIdAndUpdate(id, ctx.request.body.property, (err, property) => {
-        if(err || !property){
-            console.log("This property has no info.");
-            console.log(err);
-        } else {
-            console.log(property);           
+//async function for updating the info of a property
+export async function update(ctx) {
+    try{
+        let images; //property image 
+        //Store all values from the body into variables
+        const { name, price, description, category, status, 
+               location } = ctx.request.body;
+        let { features } = ctx.request.body;  //get features as they will be modified  
+        
+        //save the new image or load the old one
+        if(ctx.request.files && ctx.request.files.file) {
+            images = await getFile(ctx)
+            //convert features from string to array
+            features = features.split(',');
+        } 
+        else { 
+            //check if image name exists
+            if(ctx.request.body.image) {
+                try{
+                    const img = ctx.request.body.image;
+                    loadFile(img); //try to load the file 
+                    images = img; //set the image name 
+                } catch (err) { throw new Error("This file does not exist!")}
+            }         
+        };
+        const id = ctx.params.id; //preoprty id        
+        
+        //Set up the owner/seller of the property
+        const author = {
+            id: ctx.state.user._id,
+            username: ctx.state.user.username
+        }  
+                
+        //Add the information to the property
+        const newProperty = {
+            name: name,
+            price: price,    
+            image: images,
+            description: description ,
+            category: category,
+            status: status,
+            features: features,
+            location: location ,
+            author: author           
         }
-    });
-    //Render the test page and push the properties
-    await ctx.redirect("/api/property/show/" + property._id);   
-    //continue after middleware is done
-    await next();
+        
+        //find the property in the db and update it
+        await Property.findByIdAndUpdate(id, newProperty, (err, property) => {
+            if(err || !property){
+                console.log(err);
+                throw new Error("Fail!");
+            } else {
+                ctx.status = 200;    
+                ctx.body = property;
+                console.log("Property updated!");
+            }
+        });
+    } catch(err) {
+        console.log(err);
+        //if the owner is different throw error
+        throw new Error("Something went wrong with the update!");
+    } 
 }
 
 //async middleware for deleting a property

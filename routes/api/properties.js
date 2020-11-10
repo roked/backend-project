@@ -51,7 +51,10 @@ router.get('/property/show/:id', displayOne);
 router.get('/property/show/:id/edit', isOwner, edit);
 
 //Update property info
-router.put('/property/show/:id', update);   
+router.put('/property/show/:id', upload.fields([{
+      name: 'file',
+      maxCount: 3
+    }]), update);   
 
 //Delete property
 router.delete('/property/show/:id', isOwner, deleteProperty);
