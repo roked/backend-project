@@ -42,7 +42,7 @@ router.post('/property/new', upload.fields([{
     }]), create);
 
 //Get all properties
-router.get('/property/show', display);
+router.post('/property/show', display);
 
 //Get info about a specific property
 router.get('/property/show/:id', displayOne);

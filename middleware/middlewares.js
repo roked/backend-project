@@ -141,9 +141,16 @@ export async function create(ctx) {
 
 //async function for retrieving all properties from the DB
 export async function display(ctx) {
+    let query = {};
+    //set the query if user
+    if(ctx.request.body.user && ctx.state.user._id){
+        const user = ctx.state.user;
+        const id = parseInt(user._id);
+        query = { author: { id: user._id, username: user.username } };
+    }
     try {        
         //get all properties from the DB
-        const properties = await Property.find({}, (err, property) => {
+        const properties = await Property.find(query, (err, property) => {
             if(err){
                 console.log("No properties to show");
                 console.log(err);
@@ -155,7 +162,6 @@ export async function display(ctx) {
                     //replace the image name with the image file
                     prop.image = image;
                 }                      
-                console.log(property)
                 //set the body which will be send to the frontend
                 ctx.body = property;         
             }
@@ -438,16 +444,16 @@ export async function addMessage(ctx) {
                         console.log("New message history saved!");
                     }).catch(err => ctx.body = err);
         } else {
-            history.msgs.push(msg)
+            history[0].msgs.push(msg)
             //find and update the history
-            await History.findOneAndUpdate(query, history, (err, history) => {
+            await History.findOneAndUpdate(query, history[0], (err, history) => {
                 if(err || !history){
                     console.log(err);
                     throw new Error("Fail!");
                 } else {
                     ctx.status = 200;    
                     ctx.body = history;
-                    console.log("Property updated!");
+                    console.log("New message added!");
                 }
             });
         }        

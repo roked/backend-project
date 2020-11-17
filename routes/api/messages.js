@@ -15,7 +15,7 @@ const router = new Router({
 router.post('/message/new', addMessage);
 
 //Get message history endpoint
-router.get('/user/register', getHistory);
+router.get('/message/get', getHistory);
 
 //Export the router
 export default router;
