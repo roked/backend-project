@@ -1,5 +1,5 @@
 /**
-* @description User endpoints
+* @description User profiles endpoints
 * @author Mitko Donchev
 */
 import Router        from '@koa/router';
