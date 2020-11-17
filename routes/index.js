@@ -5,10 +5,11 @@
 import Router from '@koa/router';
 import profileRouter from './api/profiles.js'
 import propertyRouter from './api/properties.js'
+import messagesRouter from './api/messages.js'
 
 const finalRouter = new Router();
 
-const nestedRoutes = [profileRouter, propertyRouter];
+const nestedRoutes = [profileRouter, propertyRouter, messagesRouter];
 
 //Store all routes in the final router
 for (const router of nestedRoutes) {

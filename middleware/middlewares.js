@@ -1,5 +1,5 @@
 /**
-* @description A module which contains all middlewares used during CRUD operations
+* @description A module which contains all middlewares and methods used during CRUD operations
 * @author Mitko Donchev
 */
 import Router        from '@koa/router';
@@ -7,10 +7,15 @@ import passport      from 'koa-passport';
 import { authEmail } from '../routes/auth.js';
 import User          from '../models/user.js';
 import Property      from '../models/property.js';
+import History       from '../models/msghisotry.js';
 import fs            from 'fs-extra';
 
 //Get the sign-up code from the config
 import { signUpCode as secret } from '../routes/config.js';
+
+//=================//
+//ACCOUNTS
+//=================//
 
 //async function for handling registration
 export async function register(ctx) {
@@ -76,6 +81,10 @@ export async function register(ctx) {
     }
 }
 
+//=================//
+//PROPERTIES
+//=================//
+
 //async function for handling property creation
 export async function create(ctx) {
     //Store all values from the body into variables
@@ -132,9 +141,16 @@ export async function create(ctx) {
 
 //async function for retrieving all properties from the DB
 export async function display(ctx) {
+    let query = {};
+    //set the query if user
+    if(ctx.request.body.user && ctx.state.user._id){
+        const user = ctx.state.user;
+        const id = parseInt(user._id);
+        query = { author: { id: user._id, username: user.username } };
+    }
     try {        
         //get all properties from the DB
-        const properties = await Property.find({}, (err, property) => {
+        const properties = await Property.find(query, (err, property) => {
             if(err){
                 console.log("No properties to show");
                 console.log(err);
@@ -145,7 +161,7 @@ export async function display(ctx) {
                     const image = loadFile(prop.image[0]); 
                     //replace the image name with the image file
                     prop.image = image;
-                }                                  
+                }                      
                 //set the body which will be send to the frontend
                 ctx.body = property;         
             }
@@ -388,4 +404,88 @@ function loadFile(fileName) {
 	} catch(err) {
 		console.log(err.message);
 	}
+}
+
+//=================//
+//MESSAGES
+//=================//
+
+/**
+ * The function to get a message history and store it.
+ *
+ * @name Save message
+ * @params {Object} ctx - context
+ */
+export async function addMessage(ctx) {
+    //store all values from the body into variables
+    const { receiver , msg } = ctx.request.body;       
+    //get currently loged user
+    let currentUser;
+    if(ctx.state.user) {
+        currentUser = ctx.state.user.username;
+    } else {
+        currentUser = "guest";
+    }
+    //set up a rule for searching
+    const query = { sender: currentUser, receiver: receiver };
+    try {
+        //try to get an existing message history with the same sender-receiver
+        let history = await History.find(query);
+        //checks if the message history already exists
+        if(history.length === 0) {
+            history = new History();
+            //Add the information of the new history
+            history.sender = currentUser;
+            history.receiver = receiver;     
+            history.msgs.push(msg);
+            //add new history
+            await history.save().then(() => {
+                        ctx.body = history;
+                        console.log("New message history saved!");
+                    }).catch(err => ctx.body = err);
+        } else {
+            history[0].msgs.push(msg)
+            //find and update the history
+            await History.findOneAndUpdate(query, history[0], (err, history) => {
+                if(err || !history){
+                    console.log(err);
+                    throw new Error("Fail!");
+                } else {
+                    ctx.status = 200;    
+                    ctx.body = history;
+                    console.log("New message added!");
+                }
+            });
+        }        
+    } catch(err) {
+        console.log(err);
+        throw new Error("Fail to add history!");
+    }     
+}
+
+/**
+ * The function to get a all message history.
+ *
+ * @name Get messages
+ * @params {Object} ctx - context
+ */
+export async function getHistory(ctx) {
+    //get currently loged user
+    const currentUser = ctx.state.user.username;
+    
+    try {        
+        //get user message history from the DB
+        const history = await History.find({ receiver: currentUser }, (err, history) => {
+            if(err){
+                console.log("No history to show");
+                console.log(err);
+            } else {                                        
+                console.log(history)
+                //set the body which will be send to the frontend
+                ctx.body = history;         
+            }
+        }); 
+    } catch(err) {
+        console.log(err);
+    } 
 }
