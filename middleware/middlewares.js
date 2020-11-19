@@ -92,13 +92,21 @@ export async function create(ctx) {
            location } = ctx.request.body;   
     
     //get features as they will be modified
-    let { features } = ctx.request.body; 
+    let { features } = ctx.request.body;     
     
     //get each image from the request body
     const images = await getFile(ctx);
     
     //convert features from string to array
     features = features.split(',');
+    let finalFeatures = [];
+    for(const feat of features) {
+        if(feat === 'true') { 
+            finalFeatures.push(true) 
+        } else {finalFeatures.push(false)}
+    }
+    
+    console.log(finalFeatures)
     
     //Set up the owner/seller of the property
     const author = {
@@ -120,7 +128,7 @@ export async function create(ctx) {
         property.description = description; 
         property.category = category;
         property.status = status;
-        property.features = features;
+        property.features = finalFeatures;
         property.location = location; 
         property.author = author; 
                 
@@ -162,6 +170,7 @@ export async function display(ctx) {
                     //replace the image name with the image file
                     prop.image = image;
                 }                      
+                console.log(property);
                 //set the body which will be send to the frontend
                 ctx.body = property;         
             }
@@ -330,13 +339,13 @@ export async function deleteProperty(ctx) {
 //async middleware to clear the DB
 export async function deleteAll(ctx, next) {
     //Delete everything from the DB on users and properties
-    await User.deleteMany({}, (err) => {
-        if(err){
-            console.log(err);
-        } else {
-            console.log("User DB clear");          
-        }
-    });
+//     await User.deleteMany({}, (err) => {
+//         if(err){
+//             console.log(err);
+//         } else {
+//             console.log("User DB clear");          
+//         }
+//     });
     
     await Property.deleteMany({}, (err) => {
         if(err){
