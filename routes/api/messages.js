@@ -4,7 +4,7 @@
 */
 import Router        from '@koa/router';
 import History      from '../../models/msghisotry.js';
-import { addMessage, getHistory }  from '../../middleware/middlewares.js'
+import { addMessage, getHistory, deleteMessage }  from '../../middleware/middlewares.js'
 
 //Setting up default path to be /api
 const router = new Router({
@@ -16,6 +16,9 @@ router.post('/message/new', addMessage);
 
 //Get message history endpoint
 router.get('/message/get', getHistory);
+
+//Get message history endpoint
+router.delete('/message/:id', deleteMessage);
 
 //Export the router
 export default router;

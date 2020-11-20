@@ -149,7 +149,7 @@ export async function create(ctx) {
 
 //async function for retrieving all properties from the DB
 export async function display(ctx) {
-    let query = {};
+    let query = {status: { $ne: "Unpublished" }};
     //set the query if user
     if(ctx.request.body.user && ctx.state.user._id){
         const user = ctx.state.user;
@@ -315,7 +315,12 @@ export async function update(ctx) {
     } 
 }
 
-//async middleware for deleting a property
+/**
+ * The function will delete a property.
+ *
+ * @name Delete property
+ * @params {Object} ctx - context
+ */
 export async function deleteProperty(ctx) {
     //get the property id from the request
     const id = ctx.params.id;
@@ -397,7 +402,7 @@ async function getFile(ctx) {
  */
 function loadFile(fileName) {
     //objImg will store the base64 string string
-	const objImg = {img:null}
+	const objImg = {filename: fileName, img:null}
     
 	try {
         //read the file from the server dir
@@ -497,4 +502,25 @@ export async function getHistory(ctx) {
     } catch(err) {
         console.log(err);
     } 
+}
+
+/**
+ * The function will delete a message.
+ *
+ * @name Delete message
+ * @params {Object} ctx - context
+ */
+export async function deleteMessage(ctx) {
+    //get the property id from the request
+    const id = ctx.params.id;
+    //Find the property using the ID and remove it from the DB
+    await History.findByIdAndRemove(id, (err) => {
+        if(err){
+            console.log("This message can't be deleted");
+            console.log(err);
+        } else {
+            console.log("Message is deleted!")
+            ctx.status = 200;       
+        }
+    });    
 }
