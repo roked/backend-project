@@ -16,7 +16,7 @@ export default new CustomStrategy(async(ctx, done) => {
         if(email && password) {
             const user = await User.findOne({email: email.toLowerCase()});
             //If neither the user(email) or password is invalid, the user won't be allowed to login
-            if(!user || !user.validPassword(password)) {
+            if(!user || !user.validPassword(password) || !user.verified) {
                 done(null, false);
                 console.log('Wrong password.');
             }  
