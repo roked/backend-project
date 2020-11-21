@@ -6,10 +6,7 @@ import Router        from '@koa/router';
 import passport      from 'koa-passport';
 import { authEmail } from '../auth.js';
 import User          from '../../models/user.js';
-import { register }  from '../../middleware/middlewares.js'
-
-//TODO - REMOVE
-//import { deleteAll } from '../../middleware/middlewares.js';
+import { register, verifyUser }  from '../../middleware/middlewares.js'
 
 //Setting up default path to be /api
 const router = new Router({
@@ -43,6 +40,9 @@ router.get('/user/logout', async (ctx) => {
     }
       
 });
+
+//Verify email endpoint
+router.get('/verify/:permalink/:token', verifyUser);
 
 //Export the router
 export default router;

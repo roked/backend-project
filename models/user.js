@@ -16,6 +16,19 @@ const UserSchema = new mongoose.Schema({
         required: true,
         index: true,
     },
+    permalink: {
+        type: String,
+        required: true
+    },
+    verified: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    verify_token : {
+        type: String,
+        required: true
+    },
     //Hash is the user password - it can be only decrypt with the right algorithm and Salt
     hash: String,
     //instead of password SALT will be kept in order to encrypt and decrypt the password 

@@ -9,6 +9,8 @@ import User          from '../models/user.js';
 import Property      from '../models/property.js';
 import History       from '../models/msghisotry.js';
 import fs            from 'fs-extra';
+import nodemailer    from 'nodemailer';
+import randomstring  from 'randomstring';
 
 //Get the sign-up code from the config
 import { signUpCode as secret } from '../routes/config.js';
@@ -17,68 +19,124 @@ import { signUpCode as secret } from '../routes/config.js';
 //ACCOUNTS
 //=================//
 
+//this method will send verificastion emails
+function sendEmail(username, reciever, message) {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'roked122@gmail.com',
+            pass: 'emtjvksoxrovuaqo'
+        }
+    });
+    
+    const mailOptions = {
+      from: 'register@confirmation.ac.uk',
+      to: reciever,
+      subject: 'Please verify you registartion',
+      text: `Thank you for the registartion, ${username}! Please click the link to verify your account: ` + message
+    };    
+    
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+          console.log(err);
+      } else {
+          console.log('Email sent: ' + info.response);
+          return true;
+      }
+    });  
+}
+
 //async function for handling registration
 export async function register(ctx) {
     //Store all values from the body into variables
     const { username, email, password, signUpCode } = ctx.request.body;
-    
-    //User validation
-    if(username && email && password && signUpCode) {
-        //check if the sign up code is valid
-        if(signUpCode !== secret.secret){
-            console.log('The sign-up code is wrong or not completed, please try again!');
-            ctx.status = 400;
-            ctx.body = {
-                status: 'error',
-                message: 'The sign-up code is wrong or not completed, please try again!'
-            }; 
-        } else {
-            let user = await User.findOne({ email });
-            let user1 = await User.findOne({ username });
-
-            //TODO - Improve username/email check for duplicates function
-            //if the user is not registred
-            if(!user && !user1) {
-                user = new User();
-
-                //Add the information of the new user
-                user.username = username;
-                user.email = email;     
-                //password is hashed and securely stored
-                user.hashPassword(password);        
-
-                await user.save();
-                return passport.authenticate('email', (err, user, info, status) => {
-                    if (user) {
-                        console.log('Success');
-                        //end
-                        ctx.login(user);
-                        ctx.body = user;
-                    } else {
-                        console.log('Error');
-                        ctx.status = 400;
-                        ctx.body = { status: 'error' ,
-                                     message: 'User not allowed.'
-                                   };
-                    }
-                  })(ctx);            
-            } else {
-                console.log('E-mail/username already registered!');
+    try {
+        //User validation
+        if(username && email && password && signUpCode) {
+            //check if the sign up code is valid
+            if(signUpCode !== secret.secret){
+                console.log('The sign-up code is wrong or not completed, please try again!');
                 ctx.status = 400;
                 ctx.body = {
                     status: 'error',
-                    message: 'E-mail/username already registered!'
-                };
+                    message: 'The sign-up code is wrong or not completed, please try again!'
+                }; 
+            } else {
+                let user = await User.findOne({ email });
+                let user1 = await User.findOne({ username });
+                console.log(user)
+
+                //if the user is not registred
+                if(!user && !user1) {
+                    user = new User();
+
+                    const verification_token = randomstring.generate({length: 64});
+                    const permalink = username.toLowerCase().replace(' ', '').replace(/[^\w\s]/gi, '').trim();
+
+                    //Add the information of the new user
+                    user.username = username;
+                    user.email = email;     
+                    //password is hashed and securely stored
+                    user.hashPassword(password);        
+                    user.permalink = permalink;
+                    user.verify_token = verification_token;
+                    user.verified = false;
+
+                    await user.save((err) => {
+                        if (err) {
+                            throw err;
+                        } else {
+                            const message = `https://program-nissan-3000.codio-box.uk/api/verify/${permalink}/${verification_token}`;
+                            const result = sendEmail(username, email ,message);
+                            if(result) {
+                                console.log("User registrated!");
+                            } else {
+                                console.log("Error!");
+                            }
+                        }
+                    });        
+                } else {
+                    console.log('E-mail/username already registered!');
+                    ctx.status = 400;
+                    ctx.body = {
+                        status: 'error',
+                        message: 'E-mail/username already registered!'
+                    };
+                }
             }
+        } else {
+            console.log('Email, username or password field is empty!');        
+            ctx.status = 400;
+            ctx.body = {
+                status: 'error',
+                message: 'Email, username or password field is empty!'
+            };
         }
-    } else {
-        console.log('Email, username or password field is empty!');        
-        ctx.status = 400;
-        ctx.body = {
-            status: 'error',
-            message: 'Email, username or password field is empty!'
-        };
+    } catch (err) {
+        console.log(err);
     }
+}
+
+//method to verify user's email
+export async function verifyUser(ctx) {
+        const {permalink, token} = ctx.params;
+        await User.findOne({permalink: permalink}, (err, user) => {
+            if (user.verify_token == token) {
+                User.findOneAndUpdate({permalink: permalink}, {verified: true}, (err, res) => {
+                    console.log('The user has been verified!');
+                    ctx.status = 200;
+                    ctx.body = {
+                        message: 'User verified!'
+                    }
+                });
+            } else {
+                console.log('The token is wrong! Token should be: ' + user.verify_token);
+                ctx.status = 400;
+                ctx.body = {
+                        message: 'User not verified!'
+                    }
+            }
+        });
 }
 
 //=================//
@@ -344,13 +402,13 @@ export async function deleteProperty(ctx) {
 //async middleware to clear the DB
 export async function deleteAll(ctx, next) {
     //Delete everything from the DB on users and properties
-//     await User.deleteMany({}, (err) => {
-//         if(err){
-//             console.log(err);
-//         } else {
-//             console.log("User DB clear");          
-//         }
-//     });
+    await User.deleteMany({}, (err) => {
+        if(err){
+            console.log(err);
+        } else {
+            console.log("User DB clear");          
+        }
+    });
     
     await Property.deleteMany({}, (err) => {
         if(err){
