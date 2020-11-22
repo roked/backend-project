@@ -1,33 +1,51 @@
 /**
-* A custom passport strategy used for user authentication.
-* @author Mitko Donchev
-*/
+ * @module Authentication/email-strategy
+ * @description A custom passport strategy used for user authentication.
+ * @author Mitko Donchev
+ */
 import User from '../models/user.js';
-import pkg  from 'passport-custom';
+import pkg from 'passport-custom';
 
-const { Strategy: CustomStrategy } = pkg;
+const {Strategy: CustomStrategy} = pkg;
 
-//Create new strategy so the user should authenticate via email not username
-export default new CustomStrategy(async(ctx, done) => {
-    console.log('Email Strategy: ', ctx.body);    
-    const { email, password } = ctx.body;    
+/**
+ * Create new strategy so the user should authenticate via email not username.
+ *
+ * @name User authentication
+ * @params {Object} ctx - context
+ * @params {Object} done - callback
+ */
+export default new CustomStrategy(async (ctx, done) => {
+    console.log('Email Strategy: ', ctx.body);
+    const {email, password} = ctx.body;
     try {
         //Test whether logins using email and password
-        if(email && password) {
+        if (email && password) {
             const user = await User.findOne({email: email.toLowerCase()});
-            //If neither the user(email) or password is invalid, the user won't be allowed to login
-            if(!user || !user.validPassword(password) || !user.verified) {
-                done(null, false);
+            //if the user does not have registartion
+            if (!user) {
+                console.log('User does not exist.');
+                return done(new Error('User with this email address does not exist. Please create a new registration!'), null);
+            }
+            //If the user profile is not verified
+            //This can be done by the verification email
+            if (!user.verified) {
+                console.log('User not verified.');
+                return done(new Error('User not verified.'), null);
+            }
+            //If password is invalid the user won't be allowed to login
+            if (!user.validPassword(password)) {
                 console.log('Wrong password.');
-            }  
+                return done(new Error('Wrong password! Please try again!'), null);
+            }
             //Login successful
             console.log('Successfully authorized!');
-            done(null, user);
+            return done(null, user);
         } else {
             console.log('Email/password missing or wrong!');
-            done(null, false);
+            return done(new Error('Email/password missing or wrong!'), null);
         }
-    } catch(error) {
-        done(error);
+    } catch (error) {
+        return done(new Error('Something went wrong!'), null);
     }
 });

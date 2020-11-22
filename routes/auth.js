@@ -1,44 +1,67 @@
 /**
-* @description JS file to take care of authentication, passport initialize and user serialize/deserialize
-* @author Mitko Donchev
-*/
+ * @module Authentication/passport
+ * @description JS file to take care of authentication, passport initialize and user serialize/deserialize
+ * @author Mitko Donchev
+ */
 import passport from 'koa-passport';
-import compose  from 'koa-compose';
-import User     from '../models/user.js';
-import pkg      from 'passport-local';
-
-const {Strategy: LocalStrategy} = pkg;
-
-//Import Strategy
+import compose from 'koa-compose';
+import User from '../models/user.js';
+//Import custom strategy
 import emailStrategy from '../strategies/email.js';
 
 //Set up the correct strategy for passport
 passport.use('email', emailStrategy);
 
-//Serializing and de-serializing the user information in the session
+//Serializing the user
 passport.serializeUser((user, done) => {
-  done(null, user._id);
+    done(null, user._id);
 });
 
+//Deserializing the user
 passport.deserializeUser((id, done) => {
-  (async () => {
-    try {
-      const user = await User.findById(id);
-      done(null, user);
-    } catch (error) {
-      done(error);
-    }
-  })();
+    (async () => {
+        try {
+            const user = await User.findById(id);
+            done(null, user);
+        } catch (error) {
+            done(error);
+        }
+    })();
 });
 
-//Function to initialize passport 
+/**
+ * An async function for initializing passport.
+ *
+ * @name Initialize Passport
+ */
 export default function auth() {
-  return compose([
-    passport.initialize()
-  ]);
+    return compose([
+        passport.initialize()
+    ]);
 }
 
-//Check if the user email and password matches the DB
-export function authEmail() {
-  return passport.authenticate('email');
+/**
+ * An async function for authorizing the user.
+ *
+ * @name User authorization
+ * @params {Object} ctx - context
+ */
+export async function authEmail(ctx) {
+    return passport.authenticate('email', async (err, user) => {
+        //if the user is authenticated
+        if (user) {
+            await ctx.login(user);
+            ctx.status = 200;
+            ctx.body = {
+                user: user,
+                message: 'Successfully authorized. Welcome!'
+            };
+        } else { //if an error was triggered
+            console.log(err);
+            ctx.status = 400;
+            ctx.body = {
+                message: err.message
+            };
+        }
+    })(ctx);
 }
