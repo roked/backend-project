@@ -1,11 +1,10 @@
 /**
-* @description User profiles endpoints
-* @author Mitko Donchev
-*/
+ * @module Router/profiles
+ * @description User profiles endpoints
+ * @author Mitko Donchev
+ */
 import Router        from '@koa/router';
-import passport      from 'koa-passport';
 import { authEmail } from '../auth.js';
-import User          from '../../models/user.js';
 import { register, verifyUser }  from '../../middleware/middlewares.js'
 
 //Setting up default path to be /api
@@ -13,35 +12,53 @@ const router = new Router({
     prefix: '/api'
 });
 
-//Login endpoint
-router.post('/user/login', authEmail(), async(ctx) => {
-    //get the loged user 
-    //after successfull authorization
-    ctx.body = ctx.state.user;
-    //send the loged user to the frontend
-    return ctx.body;
-});
+/**
+ * Login endpoint.
+ *
+ * @name Login
+ * @route {POST} /
+ */
+router.post('/user/login', authEmail);
 
-//Register endpoint
+/**
+ * Register endpoint.
+ *
+ * @name Register
+ * @route {POST} /
+ */
 router.post('/user/register', register);
 
-//Logout endpoint
+/**
+ * Logout endpoint.
+ *
+ * @name Logout
+ * @route {GET} /
+ */
 router.get('/user/logout', async (ctx) => {
     try{
         if (ctx.isAuthenticated()) {
             ctx.logout();
         }
+        ctx.status = 200;
         ctx.body = {
-            status: 'success',
-            message: 'User loged out!'
-        }; 
+            message: 'Successfully logged out!'
+        };
     } catch(err) {
         console.log(err.message);
+        ctx.status = 400;
+        ctx.body = {
+            message: 'User logout failed. Please try again!'
+        };
     }
-      
+
 });
 
-//Verify email endpoint
+/**
+ * Profile email verification endpoint.
+ *
+ * @name Verify profile
+ * @route {GET} /
+ */
 router.get('/verify/:permalink/:token', verifyUser);
 
 //Export the router

@@ -1,6 +1,7 @@
 /**
-* @description Property endpoints 
-* @author Mitko Donchev
+ * @module Router/properties
+ * @description Property endpoints 
+ * @author Mitko Donchev
 */
 import Router        from '@koa/router';
 import passport      from 'koa-passport';
