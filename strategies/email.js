@@ -49,3 +49,4 @@ export default new CustomStrategy(async (ctx, done) => {
         return done(new Error('Something went wrong!'), null);
     }
 });
+

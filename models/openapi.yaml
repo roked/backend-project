@@ -275,3 +275,69 @@ paths:
         - url: 'https://program-nissan-3000.codio-box.uk'
     servers:
       - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/message/new:
+    post:
+      description: Send new message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msgs:
+                  type: array
+                  items:
+                    type: string
+                receiver:
+                  type: string
+                sender:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "sender": "mitkodonchev",
+                      "receiver": "donchevm",
+                      "msgs": ["Hello!"]
+                  }
+      responses:
+        '200':
+          description: Message send!
+        '400':
+          description: Message not send!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/message/get:
+    get:
+      description: Get message history
+      responses:
+        '200':
+          description: History loaded!
+        '400':
+          description: No new messages!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/message/{id}:
+    delete:
+      parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: string
+              minimum: 1
+            description: The id of the message
+      description: Delete message
+      responses:
+        '200':
+          description: Message deleted!
+        '400':
+          description: Cannot delete message!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'

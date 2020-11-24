@@ -21,7 +21,7 @@ import {signUpCode as secret} from '../routes/config.js';
  * An async function for handling registration.
  *
  * @name User registration
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function register(ctx) {
     //Store all values from the body into variables
@@ -124,14 +124,14 @@ async function sendEmail(username, receiver, message) {
  * An async function for verify user's email.
  *
  * @name Verify user
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function verifyUser(ctx) {
     const {permalink, token} = ctx.params;
     try {
         const user = await User.findOne({permalink: permalink});
         if (user.verify_token === token) {
-            User.findOneAndUpdate({permalink: permalink}, {verified: true});
+            await User.findOneAndUpdate({permalink: permalink}, {verified: true});
             console.log('The user has been verified!');
             ctx.status = 200;
             ctx.body = {
@@ -156,7 +156,7 @@ export async function verifyUser(ctx) {
  * An async function for handling property creation.
  *
  * @name Create property
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function create(ctx) {
     const {    //Store all values from the body into variables
@@ -224,7 +224,7 @@ export async function create(ctx) {
  * An async function for retrieving all properties.
  *
  * @name Get all properties
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function display(ctx) {
     //set the default query
@@ -272,7 +272,7 @@ export async function display(ctx) {
  * An async function for retrieving info about specific property.
  *
  * @name Get single property
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function displayOne(ctx) {
     //Get the property id from the request
@@ -301,7 +301,7 @@ export async function displayOne(ctx) {
  * An async function that allows the user to edit a property.
  *
  * @name Edit property
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function edit(ctx) {
     //Get the property id from the request
@@ -331,7 +331,7 @@ export async function edit(ctx) {
  * An async function for updating the info of a property.
  *
  * @name Update property info
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function update(ctx) {
     let images; //property image
@@ -400,8 +400,8 @@ export async function update(ctx) {
  * An async function to check if the user is the owner of the property.
  *
  * @name Check owner of the property
- * @params {Object} ctx - context
- * @params {Object} next - context
+ * @params {Object} ctx - The Koa request/response context object
+ * @params {function} next - The Koa next callback
  */
 export async function isOwner(ctx, next) {
     //get the property id from the request
@@ -430,7 +430,7 @@ export async function isOwner(ctx, next) {
  * An async function that allows the user to delete a property.
  *
  * @name Delete property
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function deleteProperty(ctx) {
     //get the property id from the request
@@ -454,7 +454,7 @@ export async function deleteProperty(ctx) {
  * An async function to get a file from the frontend and store it.
  *
  * @name Save file
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  * @returns {String} the name of the file which will be stored and used as reference
  */
 async function getFile(ctx) {
@@ -515,7 +515,7 @@ function loadFile(fileName) {
  * An async function to get a message and save it in the user history.
  *
  * @name Save message
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function addMessage(ctx) {
     //store all values from the body into variables
@@ -569,14 +569,14 @@ export async function addMessage(ctx) {
  * An async function to get user's message history.
  *
  * @name Get message history
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function getHistory(ctx) {
     //get currently logged user
     const currentUser = ctx.state.user.username;
     try {
         //get user message history from the DB
-        await History.find({receiver: currentUser});
+        const history = await History.find({receiver: currentUser});
         if (history.length === 0) {
             ctx.status = 400;
             ctx.body = {
@@ -603,7 +603,7 @@ export async function getHistory(ctx) {
  * An async function to delete a message.
  *
  * @name Delete message
- * @params {Object} ctx - context
+ * @params {Object} ctx - The Koa request/response context object
  */
 export async function deleteMessage(ctx) {
     //get the property id from the request
