@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: models/property.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,63 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: models/property.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module models/property
+ * @description The property model - contains the Property schema
+ * @author Mitko Donchev
+ */
+import mongoose from 'mongoose';
 
+const PropertySchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    price: {
+        type: String,
+        required: true
+    },
+    image: [],
+    category: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: String,
+        required: true
+    },
+    features: [],
+    location: {
+        type: String,
+        required: true
+    },
+    //Add the saller of the property
+    author: {
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            red: 'User'
+        },
+        username: String
+    }
+});
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+//Export the house model 
+export default mongoose.model('Property', PropertySchema);</code></pre>
+        </article>
+    </section>
 
 
 

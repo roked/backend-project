@@ -1,7 +1,8 @@
 /**
-* @description The message model - contains the Property schema
-* @author Mitko Donchev
-*/
+ * @module models/messages
+ * @description The message model - contains the History schema
+ * @author Mitko Donchev
+ */
 import mongoose from 'mongoose';
 
 const HistorySchema = new mongoose.Schema({
@@ -16,5 +17,5 @@ const HistorySchema = new mongoose.Schema({
     msgs:[]
 });
 
-//Export the house model 
-export default mongoose.model('Hisotry', HistorySchema);
+//Export the house model
+export default mongoose.model('History', HistorySchema);

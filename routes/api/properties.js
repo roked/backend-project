@@ -19,23 +19,6 @@ const router = new Router({
     prefix: '/api'
 });
 
-//TEST PAGE
-//TODO - Remove after finish testing
-router.get('/property', async(ctx) => {
-    //check if the user is loged in
-    if (ctx.isAuthenticated()) {       
-        console.log(ctx.isAuthenticated())
-        try {
-            await ctx.render('housecreate');
-        } catch(err) {
-            console.log(err.message);
-        }
-    //if not go to reg page
-    } else {
-        ctx.redirect('/api/');
-    }    
-});
-
 //Create new property endpoint
 router.post('/property/new', upload.fields([{
       name: 'file',
@@ -46,7 +29,7 @@ router.post('/property/new', upload.fields([{
 router.post('/property/show', display);
 
 //Get info about a specific property
-router.get('/property/show/:id', displayOne);
+router.get('/property/:id', displayOne);
 
 //Edit a property
 router.get('/property/show/:id/edit', isOwner, edit);
@@ -58,7 +41,7 @@ router.put('/property/show/:id', upload.fields([{
     }]), update);   
 
 //Delete property
-router.delete('/property/show/:id', isOwner, deleteProperty);
+router.delete('/property/delete/:id', isOwner, deleteProperty);
 
 //Export the router
 export default router;

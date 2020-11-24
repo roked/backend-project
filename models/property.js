@@ -1,34 +1,35 @@
 /**
-* @description The property model - contains the Property schema
-* @author Mitko Donchev
-*/
+ * @module models/property
+ * @description The property model - contains the Property schema
+ * @author Mitko Donchev
+ */
 import mongoose from 'mongoose';
 
 const PropertySchema = new mongoose.Schema({
-    name:{
-        type:String,
+    name: {
+        type: String,
         required: true,
     },
-    price:{
-        type:String,
+    price: {
+        type: String,
         required: true
     },
-    image:[],
-    category:{
-        type:String,
+    image: [],
+    category: {
+        type: String,
         required: true
     },
-    description:{
-        type:String,
+    description: {
+        type: String,
         required: true
     },
-    status:{
-        type:String,
+    status: {
+        type: String,
         required: true
     },
-    features:[],
-    location:{
-        type:String,
+    features: [],
+    location: {
+        type: String,
         required: true
     },
     //Add the saller of the property
