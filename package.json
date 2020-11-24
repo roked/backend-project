@@ -21,7 +21,6 @@
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
-    "koa-better-flash": "0.0.4",
     "koa-bodyparser": "^4.3.0",
     "koa-compose": "^4.1.0",
     "koa-convert": "^2.0.0",
@@ -44,8 +43,7 @@
     "passport": "^0.4.1",
     "passport-custom": "^1.1.1",
     "passport-local": "^1.0.0",
-    "randomstring": "^1.1.5",
-    "socket.io": "^3.0.1"
+    "randomstring": "^1.1.5"
   },
   "devDependencies": {
     "jsdoc": "^3.6.6"

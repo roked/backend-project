@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: models/msghisotry.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,39 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: models/msghisotry.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module models/messages
+ * @description The message model - contains the History schema
+ * @author Mitko Donchev
+ */
+import mongoose from 'mongoose';
 
+const HistorySchema = new mongoose.Schema({
+    sender:{
+        type:String,
+        required: true,
+    },
+    receiver:{
+        type:String,
+        required: true
+    },
+    msgs:[]
+});
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+//Export the house model
+export default mongoose.model('History', HistorySchema);
+</code></pre>
+        </article>
+    </section>
 
 
 

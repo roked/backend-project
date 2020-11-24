@@ -1,208 +1,343 @@
---- 
-info: 
-  description: defaultDescription
-  email: donchevm@coventry.ac.uk
-  name: "Mitko Donchev"
-  title: defaultTitle
-  version: "0.1"
-openapi: "3.0.1"
-paths: 
-  /api/property/new: 
-    post: 
-      description: "Let new property for sale"
-      requestBody: 
-        content: 
-          application/json: 
-            examples: 
-              ? "0"
-              : 
-                value: |-
-                    {
-                       "name": "Big house",
-                       "price": "25500",
-                       "image": "https://images.unsplash.com/photo-1576941089067-2de3c901e126?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1443&q=80",
-                       "description": "testProperty",
-                       "category": "commercial",
-                       "status": "high priority",
-                       "location": "West Midlands",
-                       "features": ["has garden"]
-                    }
-            schema: 
-              properties: 
-                category: 
+openapi: 3.0.1
+info:
+  title: 304CEM SPA Project
+  description: This is the OpenAPI documentation of the RESTfull backend server.
+  version: '0.1'
+servers:
+  - url: 'https://program-nissan-3000.codio-box.uk'
+paths:
+  /api/verify/{permalink}/{token}:
+    get:
+      parameters:
+          - in: path
+            name: permalink
+            required: true
+            schema:
+              type: string
+              minimum: 1
+            description: The username
+          - in: path
+            name: token
+            required: true
+            schema:
+              type: string
+              minimum: 1
+            description: The verification token
+      description: Verify user email
+      responses:
+        '200':
+          description: User verified!
+        '400':
+          description: User verification failed!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/user/login:
+    post:
+      description: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
                   type: string
-                description: 
+                email:
                   type: string
-                features: 
-                  items: 
-                    type: string
+            examples:
+              '0':
+                value: "{\r\n    \"email\": \"mitko.a.donchev@gmail.com\",\r\n    \"password\": \"testPass1\"\r\n}"
+      responses:
+        '200':
+          description: Successfully logged in!
+        '400':
+          description: Wrong credentials!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/user/register:
+    post:
+      description: Registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                signUpCode:
+                  type: string
+                email:
+                  type: string
+                username:
+                  type: string
+            examples:
+              '0':
+                value: "{\r\n    \"username\": \"testUser\",\r\n    \"email\": \"wzif@bucrita.gq\",\r\n    \"password\": \"testPass1\",\r\n    \"signUpCode\": \"we_sell_houses_agent\"\r\n}"
+      responses:
+        '200':
+          description: Registration successful.
+        '400':
+          description: Something went wrong during the registration!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/user/logout:
+    get:
+      description: Logout
+      responses:
+        '200':
+          description: User successfully logged out!
+        '400':
+          description: Something went wrong!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/property/{id}:
+    get:
+      parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The property ID
+      description: View property
+      responses:
+        '200':
+          description: Property loaded.
+        '400':
+          description: This property does not exist.
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/property/show/{id}:
+    put:
+      parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The property ID
+      description: Update property
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
                   type: array
-                image: 
+                  items:
+                    type: object
+                features:
+                  type: array
+                  items:
+                    type: boolean
+                author:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    username:
+                      type: string
+                price:
                   type: string
-                location: 
+                name:
                   type: string
-                name: 
+                description:
                   type: string
-                price: 
+                location:
                   type: string
-                status: 
+                category:
                   type: string
+                status:
+                  type: string
+            examples:
+              '0':
+                value: "{\r\n\t\"author\": {\r\n\t\t\"id\": \"5fb904cb9cf9750471e23c77\",\r\n\t\t\"username\": \"donchevm\"\r\n\t},\r\n\t\"image\": [],\r\n\t\"features\": [\r\n\t\tfalse,\r\n\t\ttrue,\r\n\t\ttrue,\r\n\t\ttrue,\r\n\t\tfalse\r\n\t],\r\n\t\"name\": \"New Property\",\r\n\t\"price\": \"504000\",\r\n\t\"description\": \"This property is a test property.\",\r\n\t\"category\": \"House\",\r\n\t\"status\": \"New\",\r\n\t\"location\": \"CVTEST\"\r\n}"
+      responses:
+        '200':
+          description: Property updated.
+        '400':
+          description: Fail to update property.
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/property/delete/{id}:
+    delete:
+      parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The property ID
+      description: Delete property
+      responses:
+        '200':
+          description: Property successfully removed.
+        '400':
+          description: Property cannot be deleted.
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/property/show:
+    post:
+      description: Display all properties.
+      responses:
+        '200':
+          description: Properties loaded.
+        '400':
+          description: No active properties
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/property/new:
+    post:
+      description: Create new property
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
               type: object
-      responses: 
-        ? "200"
-        : 
-          content: 
-            ? "text/html; charset=utf-8"
-            : 
-              examples: {}
-              schema: 
-                type: string
-          description: "New property created"
-      servers: 
-        - 
-          url: "https://program-nissan-3000.codio-box.uk"
-    servers: 
-      - 
-        url: "https://program-nissan-3000.codio-box.uk"
-  /api/property/show: 
-    get: 
-      description: "Show all properties"
-      responses: 
-        ? "200"
-        : 
-          content: 
-            ? "text/html; charset=utf-8"
-            : 
-              examples: {}
-              schema: 
-                type: string
-          description: "All poperties displayed"
-      servers: 
-        - 
-          url: "https://program-nissan-3000.codio-box.uk"
-    servers: 
-      - 
-        url: "https://program-nissan-3000.codio-box.uk"
-  ? "/api/property/show/{id}"
-  : 
-    delete: 
-      description: "Delete property"
-      responses: 
-        ? "200"
-        : 
-          content: 
-            ? "text/plain; charset=utf-8"
-            : 
-              examples: {}
-              schema: 
-                type: string
-          description: "Property successfully deleted"
-      servers: 
-        - 
-          url: "https://program-nissan-3000.codio-box.uk"
-    servers: 
-      - 
-        url: "https://program-nissan-3000.codio-box.uk"
-  ? "/api/property/show/{id}/edit"
-  : 
-    get: 
-      description: "Property owner can edit the info"
-      responses: 
-        ? "200"
-        : 
-          content: 
-            ? "text/html; charset=utf-8"
-            : 
-              examples: {}
-              schema: 
-                type: string
-          description: "User authorized to edit the property"
-      servers: 
-        - 
-          url: "https://program-nissan-3000.codio-box.uk"
-    servers: 
-      - 
-        url: "https://program-nissan-3000.codio-box.uk"
-  /api/user/login: 
-    post: 
-      description: "User login"
-      requestBody: 
-        content: 
-          application/json: 
-            examples: 
-              ? "0"
-              : 
+              properties:
+                image:
+                  type: array
+                  items:
+                    type: object
+                features:
+                  type: array
+                  items:
+                    type: boolean
+                author:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    username:
+                      type: string
+                price:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                location:
+                  type: string
+                _id:
+                  type: string
+                category:
+                  type: string
+                status:
+                  type: string
+            examples:
+              '0':
+                value: "{\r\n\t\"author\": {\r\n\t\t\"id\": \"5fb904cb9cf9750471e23c77\",\r\n\t\t\"username\": \"donchevm\"\r\n\t},\r\n\t\"image\": [],\r\n\t\"features\": [\r\n\t\tfalse,\r\n\t\ttrue,\r\n\t\ttrue,\r\n\t\ttrue,\r\n\t\tfalse\r\n\t],\r\n\t\"_id\": \"5fbbd5234416a60c8a98dbea\",\r\n\t\"name\": \"New Property\",\r\n\t\"price\": \"504000\",\r\n\t\"description\": \"This property is a test property.\",\r\n\t\"category\": \"House\",\r\n\t\"status\": \"New\",\r\n\t\"location\": \"CVTEST\"\r\n}"
+      responses:
+        '200':
+          description: New property successfully created.
+        '400':
+          description: Property cannot be created.
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/property/show/{id}/edit:
+    get:
+      parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The property ID
+      description: Get property for edit
+      responses:
+        '200':
+          description: Property loaded.
+        '400':
+          description: Property cannot be found.
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/message/new:
+    post:
+      description: Send new message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msgs:
+                  type: array
+                  items:
+                    type: string
+                receiver:
+                  type: string
+                sender:
+                  type: string
+            examples:
+              '0':
                 value: |-
-                    {
-                       "email": "gaga@mail.com",
-                       "password": "test1234"
-                    }
-            schema: 
-              properties: 
-                email: 
-                  type: string
-                password: 
-                  type: string
-              type: object
-      responses: 
-        ? "200"
-        : 
-          content: 
-            ? "text/html; charset=utf-8"
-            : 
-              examples: {}
-              schema: 
-                type: string
-          description: "Successfuly loged in."
-      servers: 
-        - 
-          url: "https://program-nissan-3000.codio-box.uk"
-    servers: 
-      - 
-        url: "https://program-nissan-3000.codio-box.uk"
-  /api/user/register: 
-    post: 
-      description: "User registration"
-      requestBody: 
-        content: 
-          application/json: 
-            examples: 
-              ? "0"
-              : 
-                value: |-
-                    {
-                       "email": "testUsers@mail.com",
-                       "username": "testUsers",
-                       "password": "test1",
-                       "signUpCode": "we_sell_houses_agent"
-                    }
-            schema: 
-              properties: 
-                email: 
-                  type: string
-                password: 
-                  type: string
-                signUpCode: 
-                  type: string
-                username: 
-                  type: string
-              type: object
-      responses: 
-        ? "200"
-        : 
-          content: 
-            ? "application/json; charset=utf-8"
-            : 
-              examples: {}
-              schema: 
-                type: string
-          description: "Successfuly completed the registration"
-      servers: 
-        - 
-          url: "https://program-nissan-3000.codio-box.uk"
-    servers: 
-      - 
-        url: "https://program-nissan-3000.codio-box.uk"
-servers: 
-  - 
-    url: "https://program-nissan-3000.codio-box.uk"
+                  {
+                      "sender": "mitkodonchev",
+                      "receiver": "donchevm",
+                      "msgs": ["Hello!"]
+                  }
+      responses:
+        '200':
+          description: Message send!
+        '400':
+          description: Message not send!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/message/get:
+    get:
+      description: Get message history
+      responses:
+        '200':
+          description: History loaded!
+        '400':
+          description: No new messages!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'
+  /api/message/{id}:
+    delete:
+      parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: string
+              minimum: 1
+            description: The id of the message
+      description: Delete message
+      responses:
+        '200':
+          description: Message deleted!
+        '400':
+          description: Cannot delete message!
+      servers:
+        - url: 'https://program-nissan-3000.codio-box.uk'
+    servers:
+      - url: 'https://program-nissan-3000.codio-box.uk'

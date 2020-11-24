@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: routes/api/messages.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,59 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: routes/api/messages.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Router/messages
+ * @description Message system endpoints
+ * @author Mitko Donchev
+ */
+import Router from '@koa/router';
+import {addMessage, getHistory, deleteMessage} from '../../middleware/middlewares.js'
+
+//Setting up default path to be /api
+const router = new Router({
+    prefix: '/api'
+});
 
 
-    <h3> </h3>
+/**
+ * The add new message endpoint.
+ *
+ * @name Add new message
+ * @route {POST} /
+ */
+router.post('/message/new', addMessage);
 
+/**
+ * The get message history endpoint.
+ *
+ * @name Get message history
+ * @route {GET} /
+ */
+router.get('/message/get', getHistory);
 
+//Get message history endpoint
+/**
+ * Delete message from history endpoint.
+ *
+ * @name Delete message
+ * @route {DELETE} /
+ */
+router.delete('/message/:id', deleteMessage);
 
-
-
-
-
-
-
-
-    
-
-
-
-
-
+//Export the router
+export default router;
+</code></pre>
+        </article>
+    </section>
 
 
 

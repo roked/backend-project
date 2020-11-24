@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: routes/index.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,39 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: routes/index.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Router/index
+ * @description Index route file which imports all routes and combines them.
+ * @author Mitko Donchev
+ */
+import Router from '@koa/router';
+import profileRouter from './api/profiles.js'
+import propertyRouter from './api/properties.js'
+import messagesRouter from './api/messages.js'
 
+const finalRouter = new Router();
 
-    <h3> </h3>
+const nestedRoutes = [profileRouter, propertyRouter, messagesRouter];
 
+//Store all routes in the final router
+for (const router of nestedRoutes) {
+    finalRouter.use(router.routes());
+    finalRouter.use(router.allowedMethods());
+}
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+//Export all routes
+export default finalRouter;</code></pre>
+        </article>
+    </section>
 
 
 
