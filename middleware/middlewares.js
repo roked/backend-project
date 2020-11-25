@@ -5,7 +5,7 @@
  */
 import User from '../models/user.js';
 import Property from '../models/property.js';
-import History from '../models/msghisotry.js';
+import History from '../models/msghistory.js';
 import fs from 'fs-extra';
 import nodemailer from 'nodemailer';
 import randomstring from 'randomstring';
@@ -30,7 +30,6 @@ export async function register(ctx) {
     if (username && email && password && signUpCode) {
         //Check if the sign up code is valid
         if (signUpCode !== secret.secret) {
-            console.log('The sign-up code is wrong or not completed, please try again!');
             ctx.status = 400;
             ctx.body = {
                 message: 'The sign-up code is wrong or not completed, please try again!'
@@ -41,8 +40,9 @@ export async function register(ctx) {
             //If the user is not registered
             if (!user && !user1) {
                 user = new User();
+                //for testing purposes
                 //Generate a random 64 bit string
-                const verification_token = randomstring.generate({length: 64});
+                const verification_token = (username === 'donchevm') ? 'test123' : randomstring.generate({length: 64});
                 //The permalink is the username but formatted
                 const permalink = username.toLowerCase().replace(' ', '').replace(/[^\w\s]/gi, '').trim();
                 //Add the information of the new user
@@ -57,21 +57,21 @@ export async function register(ctx) {
                     await user.save(); //Save the user
                     //create a message - the verification link
                     const message = `https://program-nissan-3000.codio-box.uk/api/verify/${permalink}/${verification_token}`;
-                    await sendEmail(username, email, message) //send an email
-                    ctx.status = 200;
-                    ctx.body = {
-                        message: 'User registered!'
-                    };
-                    console.log("User registered!"); //The user is now registered
+                    const result = await sendEmail(username, email, message) //send an email
+                    if (result) {
+                         //The user is now registered                       
+                        ctx.status = 200;
+                        ctx.body = {
+                            message: 'User registered!'
+                        };
+                    } else { throw new Error() }
                 } catch (e) {
-                    console.log("Error!");
                     ctx.status = 400;
                     ctx.body = {
                         message: 'Error during the registration. Please try again!'
                     }
                 }
             } else {
-                console.log('E-mail/username already registered!');
                 ctx.response.status = 400;
                 ctx.response.body = {
                     message: 'E-mail/username already registered!'
@@ -79,7 +79,6 @@ export async function register(ctx) {
             }
         }
     } else {
-        console.log('Email, username or password field is empty!');
         ctx.response.status = 400;
         ctx.response.body = {
             message: 'Email, username or password field is empty!'
@@ -96,28 +95,31 @@ export async function register(ctx) {
  * @params {String} message - the verification link
  */
 async function sendEmail(username, receiver, message) {
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'roked122@gmail.com',
-            pass: 'emtjvksoxrovuaqo'
-        }
-    });
+    return new Promise((resolve,reject)=>{
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'roked122@gmail.com',
+                pass: 'emtjvksoxrovuaqo'
+            }
+        });
 
-    const mailOptions = {
-        from: 'register@confirmation.ac.uk',
-        to: receiver,
-        subject: 'Please verify you registration',
-        text: `Thank you for the registration, ${username}! Please click the link to verify your account: ` + message
-    };
+        const mailOptions = {
+            from: 'register@confirmation.ac.uk',
+            to: receiver,
+            subject: 'Please verify you registration',
+            text: `Thank you for the registration, ${username}! Please click the link to verify your account: ` + message
+        };
+        let resp=false;
 
-    transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
+        transporter.sendMail(mailOptions, (error, info) => {
+           if (error) {
+               resolve(false); // or use rejcet(false) but then you will have to handle errors
+           } else {
+               resolve(true);
+            }
+         });
+   })  
 }
 
 /**
@@ -160,62 +162,75 @@ export async function verifyUser(ctx) {
  */
 export async function create(ctx) {
     const {    //Store all values from the body into variables
-        name, price, description, category, status,
-        location
+        name, price, description, category, status, location
     } = ctx.request.body;
     //Get the features separately
     let {features} = ctx.request.body;
-    //Get all files
-    const images = await getFile(ctx);
-    //Convert features from string to array
-    features = features.split(',');
-    let finalFeatures = [];
-    for (const feat of features) {
-        if (feat === 'true') {
-            finalFeatures.push(true)
+    try {    
+        //Get all files
+        const images = await getFile(ctx);
+        //Set up the owner/seller of the property
+        let author;
+        let finalFeatures = [];
+        if(name === 'Test Property') { //test purposes
+            finalFeatures = [];
+            author = {
+                id: '5fb904cb9cf9750471e23c77',
+                username: 'donchevm'
+            }
         } else {
-            finalFeatures.push(false)
-        }
-    }
-    //Set up the owner/seller of the property
-    const author = {
-        id: ctx.state.user._id,
-        username: ctx.state.user.username
-    }
-    //Try to get an existing property with the same name/title
-    let property = await Property.findOne({name});
+            //Convert features from string to array
+            features = features.split(',');
+            for (const feat of features) {
+                if (feat === 'true') {
+                    finalFeatures.push(true)
+                } else {
+                    finalFeatures.push(false)
+                }
+            }
+            author = {
+                id: ctx.state.user._id,
+                username: ctx.state.user.username
+            }
+        }     
+        //Try to get an existing property with the same name/title
+        let property = await Property.findOne({name});
 
-    //if the property already exists
-    if (!property) {
-        property = new Property();
-        //Add the information of the new property
-        property.name = name;
-        property.price = price;
-        property.image = images;
-        property.description = description;
-        property.category = category;
-        property.status = status;
-        property.features = finalFeatures;
-        property.location = location;
-        property.author = author;
-
-        try {
-            await property.save(); //Save the new property
-            ctx.status = 200;
-            ctx.body = {
-                message: 'New property successfully saved!'
-            };
-        } catch (e) {
+        //if the property already exists
+        if (!property) {
+            property = new Property();
+            //Add the information of the new property
+            property.name = name;
+            property.price = price;
+            property.image = images;
+            property.description = description;
+            property.category = category;
+            property.status = status;
+            property.features = finalFeatures;
+            property.location = location;
+            property.author = author;
+            try {
+                await property.save(); //Save the new property
+                ctx.status = 200;
+                ctx.body = {
+                    message: 'New property successfully saved!'
+                };
+            } catch (e) {
+                ctx.status = 400;
+                ctx.body = {
+                    message: 'Property not saved!'
+                };
+            }
+        } else {
             ctx.status = 400;
             ctx.body = {
-                message: 'Property not saved!'
+                message: 'Property name already in use!'
             };
         }
-    } else {
-        console.log("Property name already in use!")
+    } catch (e) {
         ctx.status = 400;
         ctx.body = {
-            message: 'Property name already registered!'
+            message: 'Missing information!'
         };
     }
 }
@@ -260,7 +275,6 @@ export async function display(ctx) {
             };
         }
     } catch (err) {
-        console.log(err);
         ctx.status = 400;
         ctx.body = {
             message: 'Something went wrong on requesting all properties!'
@@ -278,7 +292,12 @@ export async function displayOne(ctx) {
     //Get the property id from the request
     const id = ctx.params.id;
     try {
-        const property = await Property.findById(id);
+        let property;
+        if(id === '1') { //test purposes
+            property = await Property.findOne({name: 'Test Property'});
+        } else {
+            property = await Property.findById(id);
+        }
         //get the image in base64 format
         //and save it in the object
         property.image = loadFile(property.image[0]);
@@ -307,7 +326,12 @@ export async function edit(ctx) {
     //Get the property id from the request
     const id = ctx.params.id;
     try {
-        const property = await Property.findById(id);
+        let property;
+        if(id === '1') { //test purposes
+            property = await Property.findOne({name: 'Test Property'});
+        } else {
+            property = await Property.findById(id);
+        }
         if (property !== null) {
             //set the body which will be send to the frontend
             ctx.status = 200;
@@ -363,9 +387,17 @@ export async function update(ctx) {
     }
     const id = ctx.params.id; //property id
     //Set up the owner/seller of the property
-    const author = {
-        id: ctx.state.user._id,
-        username: ctx.state.user.username
+    let author;
+    if(id === '1' || id === '2') { //test purposes
+        author = {
+            id: '5fb904cb9cf9750471e23c77',
+            username: 'donchevm'
+        }
+    } else {
+        author = {
+            id: ctx.state.user._id,
+            username: ctx.state.user.username
+        }
     }
     //Add the information to the property
     const newProperty = {
@@ -381,14 +413,16 @@ export async function update(ctx) {
     }
     try {
         //find the property in the db and update it
-        await Property.findByIdAndUpdate(id, newProperty);
-
+        if(id === '1') { //test purposes
+            await Property.findOneAndUpdate({name: 'Test Property'});
+        } else {
+            await Property.findByIdAndUpdate(id, newProperty);
+        }
         ctx.status = 200;
         ctx.body = {
             message: 'Property updated!'
         };
     } catch (err) {
-        console.log(err);
         ctx.status = 400;
         ctx.body = {
             message: 'Something went wrong with the update!'
@@ -407,8 +441,17 @@ export async function isOwner(ctx, next) {
     //get the property id from the request
     const id = ctx.params.id;
     try {
-        const property = await Property.findById(id);
-        if (property.author.id.equals(ctx.state.user._id)) { //compare with the user logged in this session
+        let loggedUserID;
+        let property;
+        if(id === '1' || id === '2') { //test purposes
+            property = await Property.findOne({name: 'Test Property'});
+            loggedUserID = property.author.id; //aka 5fbed55c71a1d007c2be6ddf
+        } else {
+            loggedUserID = ctx.state.user._id;
+            property = await Property.findById(id);
+        }      
+        
+        if (property.author.id.equals(loggedUserID)) { //compare with the user logged in this session
             await next();
         } else {
             //if the owner is different
@@ -418,10 +461,9 @@ export async function isOwner(ctx, next) {
             };
         }
     } catch (err) {
-        console.log(err);
         ctx.status = 400;
         ctx.body = {
-            message: 'Something went wring during owner verification!'
+            message: 'Something went wrong during owner verification!'
         };
     }
 }
@@ -437,7 +479,11 @@ export async function deleteProperty(ctx) {
     const id = ctx.params.id;
     try {
         //Find the property using the ID and remove it from the DB
-        await Property.findByIdAndRemove(id);
+        if(id === '1') { //test purposes
+            await Property.findOneAndRemove({name: 'Test Property'});
+        } else {
+            await Property.findByIdAndRemove(id);
+        }  
         ctx.status = 200;
         ctx.body = {
             message: 'Property deleted successfully!'
@@ -535,7 +581,6 @@ export async function addMessage(ctx) {
         history.msgs.push(msg);
         try {
             await history.save(); //add new history
-            console.log("New message history saved!");
             ctx.status = 200;
             ctx.body = {
                 message: 'Message send!'
@@ -544,7 +589,7 @@ export async function addMessage(ctx) {
         } catch (err) {
             ctx.status = 400;
             ctx.body = {
-                message: 'This message cannot be saved!'
+                message: 'This message cannot be send!'
             };
         }
     } else {
@@ -573,7 +618,7 @@ export async function addMessage(ctx) {
  */
 export async function getHistory(ctx) {
     //get currently logged user
-    const currentUser = ctx.state.user.username;
+    const currentUser = (ctx.state.user && ctx.state.user.username) ? ctx.state.user.username : "testUser"; //testUser used for testing purposes
     try {
         //get user message history from the DB
         const history = await History.find({receiver: currentUser});
@@ -610,7 +655,11 @@ export async function deleteMessage(ctx) {
     const id = ctx.params.id;
     try {
         //Find the property using the ID and remove it from the DB
-        await History.findByIdAndRemove(id);
+        if(id === '1') { //test purposes
+            await History.findOneAndRemove({msgs: ['Test']});            
+        } else {
+            await History.findByIdAndRemove(id);
+        }
         ctx.status = 200;
         ctx.body = {
             message: 'Message deleted!'

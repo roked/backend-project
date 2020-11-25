@@ -1,4 +1,4 @@
-/**
+/**javascript:void(0)
  * @module Router/index
  * @description Index route file which imports all routes and combines them.
  * @author Mitko Donchev
