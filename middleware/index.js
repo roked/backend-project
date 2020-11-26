@@ -9,19 +9,19 @@ import logger from 'koa-logger';
 import cors from 'koa-cors';
 import bodyParser from 'koa-bodyparser';
 
-//Compose default middlewares
+// Compose default middlewares
 /**
  * A function to add all npm middlewares at once
- * 
+ *
  * @name middleware
  */
 export default function middleware() {
-    return compose([
-        //Log all requests to the console
-        logger(),
-        //Cors allows or restricts requested resources on the web server
-        convert(cors()),
-        //Bodyparser used to read from the body
-        convert(bodyParser({strict:false})),
-    ]);
+  return compose([
+    // Log all requests to the console
+    logger(),
+    // Cors allows or restricts requested resources on the web server
+    convert(cors()),
+    // Bodyparser used to read from the body
+    convert(bodyParser({ strict: false })),
+  ]);
 }
