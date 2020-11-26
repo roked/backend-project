@@ -5,14 +5,16 @@
  */
 import Router from '@koa/router';
 import multer from '@koa/multer';
-//get all middlewares for the routes
-import {create, display, displayOne, isOwner, edit, update, deleteProperty} from '../../middleware/middlewares.js';
+// get all middlewares for the routes
+import {
+  create, display, displayOne, isOwner, edit, update, deleteProperty,
+} from '../../middleware/middlewares.js';
 
 const upload = multer();
 
-//Setting up default path to be /api
+// Setting up default path to be /api
 const router = new Router({
-    prefix: '/api'
+  prefix: '/api',
 });
 
 /**
@@ -22,8 +24,8 @@ const router = new Router({
  * @route {POST} /
  */
 router.post('/property/new', upload.fields([{
-    name: 'file',
-    maxCount: 3
+  name: 'file',
+  maxCount: 3,
 }]), create);
 
 /**
@@ -57,8 +59,8 @@ router.get('/property/show/:id/edit', isOwner, edit);
  * @route {PUT} /
  */
 router.put('/property/show/:id', upload.fields([{
-    name: 'file',
-    maxCount: 3
+  name: 'file',
+  maxCount: 3,
 }]), update);
 
 /**
@@ -69,5 +71,5 @@ router.put('/property/show/:id', upload.fields([{
  */
 router.delete('/property/delete/:id', isOwner, deleteProperty);
 
-//Export the router
+// Export the router
 export default router;

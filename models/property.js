@@ -6,41 +6,41 @@
 import mongoose from 'mongoose';
 
 const PropertySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
+  name: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: String,
+    required: true,
+  },
+  image: [],
+  category: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    required: true,
+  },
+  features: [],
+  location: {
+    type: String,
+    required: true,
+  },
+  // Add the saller of the property
+  author: {
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      red: 'User',
     },
-    price: {
-        type: String,
-        required: true
-    },
-    image: [],
-    category: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    status: {
-        type: String,
-        required: true
-    },
-    features: [],
-    location: {
-        type: String,
-        required: true
-    },
-    //Add the saller of the property
-    author: {
-        id: {
-            type: mongoose.Schema.Types.ObjectId,
-            red: 'User'
-        },
-        username: String
-    }
+    username: String,
+  },
 });
 
-//Export the house model 
+// Export the house model
 export default mongoose.model('Property', PropertySchema);

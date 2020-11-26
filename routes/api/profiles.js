@@ -4,12 +4,12 @@
  * @author Mitko Donchev
  */
 import Router from '@koa/router';
-import {authEmail} from '../auth.js';
-import {register, verifyUser} from '../../middleware/middlewares.js'
+import { authEmail } from '../auth.js';
+import { register, verifyUser } from '../../middleware/middlewares.js';
 
-//Setting up default path to be /api
+// Setting up default path to be /api
 const router = new Router({
-    prefix: '/api'
+  prefix: '/api',
 });
 
 /**
@@ -35,22 +35,20 @@ router.post('/user/register', register);
  * @route {GET} /
  */
 router.get('/user/logout', async (ctx) => {
-    try {
-        if (ctx.isAuthenticated()) {
-            ctx.logout();
-        }
-        ctx.status = 200;
-        ctx.body = {
-            message: 'Successfully logged out!'
-        };
-    } catch (err) {
-        console.log(err.message);
-        ctx.status = 400;
-        ctx.body = {
-            message: 'User logout failed. Please try again!'
-        };
+  try {
+    if (ctx.isAuthenticated()) {
+      ctx.logout();
     }
-
+    ctx.status = 200;
+    ctx.body = {
+      message: 'Successfully logged out!',
+    };
+  } catch (err) {
+    ctx.status = 400;
+    ctx.body = {
+      message: 'User logout failed. Please try again!',
+    };
+  }
 });
 
 /**
@@ -61,5 +59,5 @@ router.get('/user/logout', async (ctx) => {
  */
 router.get('/verify/:permalink/:token', verifyUser);
 
-//Export the router
+// Export the router
 export default router;

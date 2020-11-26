@@ -4,13 +4,12 @@
  * @author Mitko Donchev
  */
 import Router from '@koa/router';
-import {addMessage, getHistory, deleteMessage} from '../../middleware/middlewares.js'
+import { addMessage, getHistory, deleteMessage } from '../../middleware/middlewares.js';
 
-//Setting up default path to be /api
+// Setting up default path to be /api
 const router = new Router({
-    prefix: '/api'
+  prefix: '/api',
 });
-
 
 /**
  * The add new message endpoint.
@@ -28,7 +27,7 @@ router.post('/message/new', addMessage);
  */
 router.get('/message/get', getHistory);
 
-//Get message history endpoint
+// Get message history endpoint
 /**
  * Delete message from history endpoint.
  *
@@ -37,5 +36,5 @@ router.get('/message/get', getHistory);
  */
 router.delete('/message/:id', deleteMessage);
 
-//Export the router
+// Export the router
 export default router;
