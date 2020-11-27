@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // The password is simply never stored - instead a unique salt(key) and a long hash are stored
-UserSchema.methods.hashPassword = (pass) => {
+UserSchema.methods.hashPassword = function (pass) { // eslint-disable-line func-names
   // using random bytes to get the unique salt
   this.salt = crypto.randomBytes(36).toString('hex');
   // Using synchronous Password-Based Key Derivation Function 2 (PBKDF2) to hash the password
@@ -51,7 +51,7 @@ UserSchema.methods.hashPassword = (pass) => {
 };
 
 // Validating the password vs the stored hash
-UserSchema.methods.validPassword = (pass) => {
+UserSchema.methods.validPassword = function (pass) { // eslint-disable-line func-names
   // The password provided by the user is hashed again with the stored salt
   // The salt is pulled using the email provided
   const hash = crypto.pbkdf2Sync(pass, this.salt, 40000, 512, 'sha512').toString('hex');

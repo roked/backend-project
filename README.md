@@ -119,3 +119,10 @@ Two routes follow:
 ```javascript
    '/' and '/openapi'
 ``` 
+# Run testing
+
+Two tests can be performed on this client
+
+1. ```npm test``` - this will run Jest with Supertest and test the API endpoints (and the methods used by the routes)
+
+2. ```npm run linter``` or ```npm run linter -- --fix``` - this will run Eslint with predefined rules from AirBnB. 
