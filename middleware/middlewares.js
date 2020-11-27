@@ -1,4 +1,3 @@
-/* eslint no-restricted-syntax: 0 */
 /* eslint new-cap: 0 */
 // These rules will be ignored as the _id and loops are essential
 /**
@@ -169,14 +168,15 @@ async function getFile(ctx) {
     return names;
   }
   try {
-    for (const image of images) {
+    images.map((image) => {
       fs.writeFile(`public/uploads/${image.originalname}`, image.buffer);
       ctx.status = 200;
       ctx.body = {
         message: 'The file has been saved!',
       };
       names.push(image.originalname);
-    }
+      return true;
+    });
     return names; // return the name of the image
   } catch (err) {
     ctx.status = 400;
@@ -214,13 +214,14 @@ export async function create(ctx) {
     } else {
       // Convert features from string to array
       features = features.split(',');
-      for (const feat of features) {
+      features.map((feat) => {
         if (feat === 'true') {
           finalFeatures.push(true);
         } else {
           finalFeatures.push(false);
         }
-      }
+        return true;
+      });
       author = {
         id: ctx.state.user._id,
         username: ctx.state.user.username,
@@ -317,11 +318,12 @@ export async function display(ctx) {
       };
     } else {
       // attach the image to the property object
-      for (const prop of property) {
+      property.map((prop) => {
         // get the image in base64 format
         // and save it in the object
         prop.image = loadFile(prop.image[0]);
-      }
+        return true;
+      });
       // set the body which will be send to the frontend
       ctx.status = 200;
       ctx.body = {
